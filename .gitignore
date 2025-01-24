@@ -1,1 +1,3 @@
 .idea
+/.venv/
+/doc-ingestion-pipeline-3.10/
