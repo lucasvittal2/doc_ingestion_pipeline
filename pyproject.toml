@@ -36,6 +36,7 @@ apache-airflow-providers-apache-beam = "^5.7.0"
 apache-airflow-providers-slack = "8.9.0"
 pytz = "^2024.2"
 types-pytz = "^2024.2.0.20241221"
+aiohttp = "^3.11.11"
 
 [poetry.group.dev.dependencies]
 bandit = "^1.7.7"
