@@ -7,7 +7,7 @@ import apache_beam as beam
 import pytz  # type: ignore
 from apache_beam.metrics import Metrics
 
-from doc_ingestion_pipeline.utils.logging import LoggerHandler
+from doc_ingestion_pipeline.utils.app_logging import LoggerHandler
 
 
 class BaseDoFn(beam.DoFn):
