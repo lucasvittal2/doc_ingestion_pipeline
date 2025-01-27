@@ -2,7 +2,7 @@ import logging
 
 
 class LoggerHandler:
-    def _init_(
+    def __init__(
         self, logger_name: str, logging_type: str, log_level: str = "INFO"
     ) -> None:
         """
