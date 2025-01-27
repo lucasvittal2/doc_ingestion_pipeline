@@ -5,6 +5,7 @@ from apache_beam.io import WriteToBigQuery
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.transforms.display import DisplayDataItem
 
+from doc_ingestion_pipeline.beam.dofunctions import process_pdf_dofn as dofn
 from doc_ingestion_pipeline.beam.dofunctions.base_dofn import BaseDoFn
 
 
@@ -62,38 +63,47 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
         try:
             self.logger.info("Starting Process Pdf Beam Pipeline...")
             with beam.Pipeline(options=pipeline_options) as pipeline:
-                input_file = custom_options.input_file
 
                 transform_pdf_in_chunks = (
                     pipeline
+                    | "emit GCS event"
+                    >> beam.Create(
+                        [
+                            {
+                                "pdf_path": "/home/acer/projects/doc_ingestion_pipeline/assets/fundamentals-data-engineering-robust-29-57.pdf"
+                            }
+                        ]
+                    )
                     | "ingest pdf"
-                    >> (lambda x: x)  # replace by correspondent do function
-                    | "split into chunks"
-                    >> (lambda x: x)  # replace by correspondent do function
+                    >> beam.ParDo(
+                        dofn.GenerateChunksDoFn(logger_name="[DOC-INGESTION-PDF]")
+                    )  # replace by correspondent do function
+                    | "print results"
+                    >> beam.Map(print)  # replace by correspondent do function
                 )
-                generate_embeddings = (
-                    transform_pdf_in_chunks
-                    | "generate embeddings"
-                    >> (lambda x: x)  # replace by correspondent do function
-                )
-                write_on_alloydb = (
-                    generate_embeddings
-                    | "format table"
-                    >> (lambda x: x)  # replace by correspondent do function
-                    | "write on alloy db"
-                    >> (lambda x: x)  # replace by correspondent do function
-                )
+                # generate_embeddings = (
+                #     transform_pdf_in_chunks
+                #     | "generate embeddings"
+                #     >> (lambda x: x)  # replace by correspondent do function
+                # )
+                # write_on_alloydb = (
+                #     generate_embeddings
+                #     | "format table"
+                #     >> (lambda x: x)  # replace by correspondent do function
+                #     | "write on alloy db"
+                #     >> (lambda x: x)  # replace by correspondent do function
+                # )
 
-                deadletter_process_pdf = (
-                    write_on_alloydb
-                    | "Format Pdf processing Dead letter"
-                    >> beam.ParDo(lambda x: x)  # replace by correspondent do function
-                    | "Write ded summary on BigQuery"
-                    >> WriteToBigQuery()  # put parameters
-                )
+                # deadletter_process_pdf = (
+                #     write_on_alloydb
+                #     | "Format Pdf processing Dead letter"
+                #     >> beam.ParDo(lambda x: x)  # replace by correspondent do function
+                #     | "Write ded summary on BigQuery"
+                #     >> WriteToBigQuery()  # put parameters
+                # )
         except Exception as err:
             self.logger.error(f"Error to retrieve pdf: \n\n{err}\n\n")
-            raise FileNotFoundError(f"pdf file not found: \n\n{err}\n\n")
+            raise err
 
 
 if __name__ == "__main__":
