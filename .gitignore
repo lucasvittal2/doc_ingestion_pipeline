@@ -2,3 +2,4 @@
 /.venv/
 /doc-ingestion-pipeline-3.10/
 /assets/tests
+/.env
