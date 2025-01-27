@@ -11,8 +11,8 @@ from doc_ingestion_pipeline.utils.logging import LoggerHandler
 
 
 class BaseDoFn(beam.DoFn):
-    def _init_(self, logger_name: str):
-        super()._init_()
+    def __init__(self, logger_name: str):
+        super().__init__()
         self.logger_name = logger_name
         self.logger = LoggerHandler(
             logger_name=self.logger_name, logging_type="console"
@@ -20,7 +20,7 @@ class BaseDoFn(beam.DoFn):
         self.queue_size = 0
         self.time_zone = pytz.timezone("America/Sao_Paulo")
 
-        namespace = self._class.module_
+        namespace = self.__class__.__module__
         self.elements_processed = Metrics.counter(namespace, "elements_processed")
         self.elements_failed = Metrics.counter(namespace, "elements_failed")
         self.processing_time = Metrics.distribution(namespace, "processing_time_ms")
