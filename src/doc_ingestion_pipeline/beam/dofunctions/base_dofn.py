@@ -11,12 +11,9 @@ from doc_ingestion_pipeline.utils.app_logging import LoggerHandler
 
 
 class BaseDoFn(beam.DoFn):
-    def __init__(self, logger_name: str):
+    def __init__(self, logg_hanlder: LoggerHandler):
         super().__init__()
-        self.logger_name = logger_name
-        self.logger = LoggerHandler(
-            logger_name=self.logger_name, logging_type="console"
-        ).get_logger()
+        self.logger = logg_hanlder.get_logger()
         self.queue_size = 0
         self.time_zone = pytz.timezone("America/Sao_Paulo")
 

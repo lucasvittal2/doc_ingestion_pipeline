@@ -7,6 +7,8 @@ from apache_beam.transforms.display import DisplayDataItem
 
 from doc_ingestion_pipeline.beam.dofunctions import process_pdf_dofn as dofn
 from doc_ingestion_pipeline.beam.dofunctions.base_dofn import BaseDoFn
+from doc_ingestion_pipeline.utils.app_logging import LoggerHandler
+from doc_ingestion_pipeline.utils.file_handling import read_yaml
 
 
 class ProcessPDFPipelineOptions(PipelineOptions):
@@ -43,8 +45,11 @@ class ProcessPDFPipelineOptions(PipelineOptions):
 
 
 class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
-    def __init__(self):
-        super().__init__(logger_name="[PROCESS-PDF-PIPELINE]")
+    def __init__(self, logger_handler: LoggerHandler, app_configs: dict):
+
+        super().__init__(logger_handler)
+        self.app_configs = app_configs
+        self.logger_handler = logger_handler
 
     def display_data(self) -> List[DisplayDataItem]:
         return [
@@ -70,16 +75,24 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                     >> beam.Create(
                         [
                             {
-                                "pdf_path": "/home/acer/projects/doc_ingestion_pipeline/assets/fundamentals-data-engineering-robust-29-57.pdf"
+                                "pdf_path": "assets/pdf/fundamentals-data-engineering-robust-29-57.pdf"
                             }
                         ]
                     )
-                    | "ingest pdf"
+                    | "ingest and create chunks"
+                    >> beam.ParDo(dofn.GenerateChunksDoFn(self.logger_handler))
+                )
+
+                extract_topics = (
+                    transform_pdf_in_chunks
+                    | "topic extraction"
                     >> beam.ParDo(
-                        dofn.GenerateChunksDoFn(logger_name="[DOC-INGESTION-PDF]")
-                    )  # replace by correspondent do function
-                    | "print results"
-                    >> beam.Map(print)  # replace by correspondent do function
+                        dofn.ExtractPageTopicDoFn(
+                            loggger_hanlder=self.logger_handler,
+                            app_configs=self.app_configs,
+                        )
+                    )
+                    | "print results" >> beam.Map(print)
                 )
                 # generate_embeddings = (
                 #     transform_pdf_in_chunks
@@ -107,5 +120,13 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
 
 
 if __name__ == "__main__":
-    process_pdf_pipeline = ProcessPdfPipeline()
+    from dotenv import load_dotenv
+
+    load_dotenv(".env")
+
+    app_configs = read_yaml("assets/configs/app-configs.yaml")
+    logger_handler = LoggerHandler(
+        logger_name="[PDF-INGESTION_PIPELINE]", logging_type="console"
+    )
+    process_pdf_pipeline = ProcessPdfPipeline(logger_handler, app_configs)
     process_pdf_pipeline.run()
