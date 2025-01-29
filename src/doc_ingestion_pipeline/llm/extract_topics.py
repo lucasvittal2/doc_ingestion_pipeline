@@ -11,17 +11,23 @@ from doc_ingestion_pipeline.utils.file_handling import read_yaml
 
 
 class OpenAITopicExtractor:
-
     def __init__(self, logger: LoggerHandler, app_configs: dict):
-        self.client = openai.OpenAI()
+        self.client = None  # Do not initialize here
         self.logger = logger.get_logger()
-        self.prompt_text = (app_configs["PROMPTS"]["TOPIC_EXTRACTION"],)
+        self.prompt_text = app_configs["PROMPTS"]["TOPIC_EXTRACTION"]
 
         llm_configs = app_configs["LLM"]["TOPIC_EXTRACTION"]
         self.LLM_TEMPERATURE = llm_configs["TEMPERATURE"]
         self.LLM_MODEL = llm_configs["MODEL"]
 
+    def setup(self):
+        """Initialize OpenAI client after pickling"""
+        self.client = openai.OpenAI()
+
     def extract_topics(self, text: str) -> List[str]:
+        if self.client is None:
+            self.setup()  # Ensure client is initialized
+
         output_parser = CommaSeparatedListOutputParser()
         format_instructions = output_parser.get_format_instructions()
         prompt = PromptTemplate(
@@ -34,7 +40,7 @@ class OpenAITopicExtractor:
 
         topics = list(set(chain.invoke({"text": text})))
         self.logger.info(
-            f"Text generated succefully using OpenAI LLM {self.LLM_MODEL} model."
+            f"Text generated successfully using OpenAI LLM {self.LLM_MODEL} model."
         )
         filtered_topics = [topic for topic in topics if "Keywords:" not in topic]
         return filtered_topics
