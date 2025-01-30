@@ -21,7 +21,6 @@ class AlloyDB:
         self.embedding_model = embedding_model
         self.db_schema = connection.db_schema
         self.vector_store: Union[AlloyDBVectorStore, None] = None
-        self.loop = asyncio.get_event_loop()
 
     async def __aenter__(self):
         """Async context manager for initializing resources."""
