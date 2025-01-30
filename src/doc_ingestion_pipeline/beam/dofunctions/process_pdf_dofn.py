@@ -1,7 +1,9 @@
 import asyncio
+import json
 from pathlib import Path
 from typing import Dict, List
 
+from google.cloud import storage
 from langchain_google_vertexai import VertexAIEmbeddings
 from llama_index.core.node_parser import SentenceWindowNodeParser
 from llama_index.readers.file import PDFReader
@@ -156,3 +158,29 @@ class WriteOnAlloyDbFn(BaseDoFn):
             except Exception as e:
                 self.logger.error(f"Error processing final batch: {str(e)}")
                 raise
+
+
+class DownloadPdfDoFn(BaseDoFn):
+    def __init__(self, loggger_hanlder: LoggerHandler, app_configs: dict):
+        super().__init__(loggger_hanlder)
+        self.app_configs = app_configs
+
+    def setup(self):
+        super().setup()
+        self.storage_client = storage.Client(self.app_configs["GCP_PROJECT"])
+
+    def process(self, element, *args, **kwargs):
+        self.logger.info("Downloading pdf...")
+        metadata_json_str = element.decode("utf-8")
+        metadata_dict = json.loads(metadata_json_str)
+        file_name = metadata_dict["name"]
+        bucket_name = metadata_dict["bucket"]
+        self.logger.info(f"Downloaded {file_name} from {bucket_name} bucket.")
+        bucket = self.storage_client.get_bucket(
+            self.app_configs["PDF_BUCKET_REPOSITORY"]
+        )
+        blob = bucket.blob(file_name)
+        local_path = f"assets/pdf/{file_name}"
+        blob.download_to_filename(local_path)
+        self.logger.info(f"PDF is available locally on {local_path}")
+        yield {"pdf_path": local_path}
