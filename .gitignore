@@ -2,4 +2,7 @@
 /.venv/
 /doc-ingestion-pipeline-3.10/
 /assets/tests
+/assets/configs/
 /.env
+/assets/configs/app-configs.yaml
+/assets/pdf/fundamentals-data-engineering-robust-29-57.pdf
