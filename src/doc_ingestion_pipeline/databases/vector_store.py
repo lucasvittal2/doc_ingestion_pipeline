@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(
         level=logging.DEBUG,
-        format="%(asctime)s - [BOT-ESPECIALIST] - %(levelname)s:  %(message)s",
+        format="%(asctime)s - [DOC-INGESTION-PIPELINE] - %(levelname)s:  %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[logging.StreamHandler()],
     )
@@ -196,7 +196,7 @@ if __name__ == "__main__":
                 }
             ]
             await db.add_records(
-                table="products", contents=descriptions, metadata=metadata, ids=[50]
+                table="products", contents=descriptions, metadata=metadata, ids=[51]
             )
 
     asyncio.run(main())
