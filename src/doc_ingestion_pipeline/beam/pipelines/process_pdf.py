@@ -69,16 +69,18 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
             self.logger.info("Starting Process Pdf Beam Pipeline...")
             with beam.Pipeline(options=pipeline_options) as pipeline:
 
-                transform_pdf_in_chunks = (
+                obtain_pdf_from_gcs = (
                     pipeline
                     | "emit GCS event"
-                    >> beam.Create(
-                        [
-                            {
-                                "pdf_path": "assets/pdf/fundamentals-data-engineering-robust-29-57.pdf"
-                            }
-                        ]
+                    >> beam.io.ReadFromPubSub(self.app_configs["PDF_UPLOAD_TOPIC"])
+                    | "download_pdf"
+                    >> beam.ParDo(
+                        dofn.DownloadPdfDoFn(self.logger_handler, self.app_configs)
                     )
+                )
+
+                transform_pdf_in_chunks = (
+                    obtain_pdf_from_gcs
                     | "ingest and create chunks"
                     >> beam.ParDo(dofn.GenerateChunksDoFn(self.logger_handler))
                 )
@@ -101,17 +103,12 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                     )
                 )
 
-                # generate_embeddings = (
-                #     transform_pdf_in_chunks
-                #     | "generate embeddings"
-                #     >> (lambda x: x)  # replace by correspondent do function
-                # )
                 write_on_alloydb = extract_topics | "write on alloy db" >> beam.ParDo(
                     dofn.WriteOnAlloyDbFn(
                         self.logger_handler,
                         self.app_configs,
                     )
-                )  # replace by correspondent do function
+                )
 
         except Exception as err:
             self.logger.error(f"Error to retrieve pdf: \n\n{err}\n\n")
