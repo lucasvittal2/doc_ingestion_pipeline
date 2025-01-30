@@ -5,4 +5,5 @@
     --pub_sub_topic "test"\
     --gcp_project "bot-especialist-dev"\
     --output_file "test" \
-    --deadletter_file "test"
+    --deadletter_file "test" \
+    --streaming
