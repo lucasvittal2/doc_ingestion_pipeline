@@ -41,6 +41,7 @@ pydantic = "^2.10.6"
 langchain-community = "^0.3.15"
 langchain-google-alloydb-pg = "^0.9.1"
 langchain-google-vertexai = "^2.0.12"
+google-cloud-pubsub = "^2.27.3"
 
 [poetry.group.dev.dependencies]
 bandit = "^1.7.7"
