@@ -92,28 +92,27 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                             app_configs=self.app_configs,
                         )
                     )
-                    | "print results" >> beam.Map(print)
+                    | "write to AlloyDB"
+                    >> beam.ParDo(  # Add this step
+                        dofn.WriteOnAlloyDbFn(
+                            loggger_hanlder=self.logger_handler,
+                            app_configs=self.app_configs,
+                        )
+                    )
                 )
+
                 # generate_embeddings = (
                 #     transform_pdf_in_chunks
                 #     | "generate embeddings"
                 #     >> (lambda x: x)  # replace by correspondent do function
                 # )
-                # write_on_alloydb = (
-                #     generate_embeddings
-                #     | "format table"
-                #     >> (lambda x: x)  # replace by correspondent do function
-                #     | "write on alloy db"
-                #     >> (lambda x: x)  # replace by correspondent do function
-                # )
+                write_on_alloydb = extract_topics | "write on alloy db" >> beam.ParDo(
+                    dofn.WriteOnAlloyDbFn(
+                        self.logger_handler,
+                        self.app_configs,
+                    )
+                )  # replace by correspondent do function
 
-                # deadletter_process_pdf = (
-                #     write_on_alloydb
-                #     | "Format Pdf processing Dead letter"
-                #     >> beam.ParDo(lambda x: x)  # replace by correspondent do function
-                #     | "Write ded summary on BigQuery"
-                #     >> WriteToBigQuery()  # put parameters
-                # )
         except Exception as err:
             self.logger.error(f"Error to retrieve pdf: \n\n{err}\n\n")
             raise err

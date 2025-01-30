@@ -14,11 +14,11 @@ class OpenAITopicExtractor:
     def __init__(self, logger: LoggerHandler, app_configs: dict):
         self.client = None  # Do not initialize here
         self.logger = logger.get_logger()
-        self.prompt_text = app_configs["PROMPTS"]["TOPIC_EXTRACTION"]
+        self.prompt_text = app_configs["TOPIC_EXTRACTION"]["PROMPT"]
 
-        llm_configs = app_configs["LLM"]["TOPIC_EXTRACTION"]
-        self.LLM_TEMPERATURE = llm_configs["TEMPERATURE"]
-        self.LLM_MODEL = llm_configs["MODEL"]
+        llm_configs = app_configs["TOPIC_EXTRACTION"]
+        self.LLM_TEMPERATURE = llm_configs["LLM_TEMPERATURE"]
+        self.LLM_MODEL = llm_configs["LLM_MODEL"]
 
     def setup(self):
         """Initialize OpenAI client after pickling"""

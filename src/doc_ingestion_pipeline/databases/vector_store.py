@@ -7,7 +7,7 @@ from typing import Any, List, Union
 import aiohttp
 from langchain_core.documents import Document
 from langchain_core.embeddings.embeddings import Embeddings
-from langchain_google_alloydb_pg import AlloyDBEngine, AlloyDBLoader, AlloyDBVectorStore
+from langchain_google_alloydb_pg import AlloyDBEngine, AlloyDBVectorStore
 from langchain_google_vertexai import VertexAIEmbeddings
 
 from doc_ingestion_pipeline.models.configs import AlloyTableConfig
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     async def main():
         # Load configurations
         app_config = read_yaml("assets/configs/app-configs.yaml")
-        connection_config = app_config["CONNECTIONS"]["ALLOYDB"]["DEV"]
+        connection_config = app_config["ALLOYDB"]["DEV"]
         connection = AlloyDBConnection(**connection_config)
 
         # Create embedding model

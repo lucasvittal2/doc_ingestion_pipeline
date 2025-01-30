@@ -1,18 +1,16 @@
 import asyncio
-import datetime
-import json
-from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List
 
-import aiohttp
-import apache_beam as beam
-from llama_index.core.node_parser import SentenceWindowNodeParser, get_leaf_nodes
-from llama_index.core.schema import Document
+from langchain_google_vertexai import VertexAIEmbeddings
+from llama_index.core.node_parser import SentenceWindowNodeParser
 from llama_index.readers.file import PDFReader
 
 from doc_ingestion_pipeline.beam.dofunctions.base_dofn import BaseDoFn
+from doc_ingestion_pipeline.databases.vector_store import AlloyDB
 from doc_ingestion_pipeline.llm.extract_topics import OpenAITopicExtractor
+from doc_ingestion_pipeline.models.configs import AlloyTableConfig
+from doc_ingestion_pipeline.models.connections import AlloyDBConnection
 from doc_ingestion_pipeline.utils.app_logging import LoggerHandler
 
 
@@ -66,3 +64,95 @@ class ExtractPageTopicDoFn(BaseDoFn):
         topics = self.topic_extractor.extract_topics(chunk["text"])
         chunk["topics"] = topics
         yield chunk
+
+
+class WriteOnAlloyDbFn(BaseDoFn):
+    def __init__(
+        self,
+        loggger_hanlder: LoggerHandler,
+        app_configs: dict,
+        env: str = "DEV",
+        batch_size: int = 10,
+    ):
+        super().__init__(loggger_hanlder)
+        self.app_configs = app_configs
+        self.env = env
+        self.batch_size = batch_size
+        self._batch: List[dict] = []
+
+    def setup(self):
+        connection_configs = self.app_configs["CONNECTIONS"]["ALLOYDB"][self.env]
+        connection = AlloyDBConnection(**connection_configs)
+
+        vectordb_configs = self.app_configs["VECTOR_STORE"]
+        self.embedding_dim = vectordb_configs["EMBEDDING_DIMENSION"]
+        self.metadata_cols = vectordb_configs["METADATA_COLUMNS"]
+        self.id_column = vectordb_configs["ID_COLUMN"]
+        self.content_column = vectordb_configs["CONTENT_COLUMN"]
+        self.embedding_column = vectordb_configs["EMBEDDING_COLUMN"]
+
+        embedding_model = VertexAIEmbeddings(
+            model_name=vectordb_configs["EMBEDDING_MODEL"],
+            project=self.app_configs["GCP_PROJECT"],
+        )
+        self.alloydb_handler = AlloyDB(connection, embedding_model)
+        super().setup()
+
+    async def __add_records_batch(self, records: List[Dict]):
+        if not records:
+            return
+
+        async with self.alloydb_handler as db:
+            table_config = AlloyTableConfig(
+                vector_size=self.embedding_dim,
+                metadata_columns=self.metadata_cols,
+                metadata_json_column="metadata",
+                id_column=self.id_column,
+                content_column=self.content_column,
+                embedding_column=self.embedding_column,
+            )
+            await db.init_vector_storage_table(
+                table="bot-brain", table_config=table_config
+            )
+
+            ids = [record["id"] for record in records]
+            texts = [record["text"] for record in records]
+            metadatas = [record["metadata"] for record in records]
+
+            await db.add_records(
+                table="bot-brain", contents=texts, metadata=metadatas, ids=ids
+            )
+
+    @BaseDoFn.gauge
+    def process(self, element: Dict[str, str], *args, **kwargs):
+        try:
+            self.logger.info(f"Processing element: {element}")
+            metadata = {col: element[col] for col in self.metadata_cols}
+
+            record = {
+                "id": element["id"],
+                "text": element["text"],
+                "metadata": metadata,
+            }
+
+            self._batch.append(record)
+
+            if len(self._batch) >= self.batch_size:
+                asyncio.run(self.__add_records_batch(self._batch))
+                self._batch = []
+
+            yield element
+
+        except Exception as e:
+            self.logger.error(f"Error processing element {element}: {str(e)}")
+            raise
+
+    def finish_bundle(self):
+        # Process any remaining records in the batch
+        if self._batch:
+            try:
+                asyncio.run(self.__add_records_batch(self._batch))
+                self._batch = []
+            except Exception as e:
+                self.logger.error(f"Error processing final batch: {str(e)}")
+                raise
