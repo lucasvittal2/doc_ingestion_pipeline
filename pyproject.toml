@@ -12,7 +12,7 @@ tiktoken = "0.7.0"
 mypy = "^1.0.0"
 toml = "^0.10.2"
 google-cloud-secret-manager = "2.20.0"
-apache-beam = "2.59.0"
+apache-beam = {extras = ["gcp"], version = "^2.62.0"}
 pyyaml = "^6.0"
 pyarrow = "16.1.0"
 Flask-Session="0.5.0"
