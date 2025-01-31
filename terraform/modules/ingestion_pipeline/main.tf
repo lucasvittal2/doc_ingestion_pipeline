@@ -33,7 +33,7 @@ resource "google_pubsub_topic_iam_binding" "binding" {
 
 
 resource "google_storage_bucket" "bucket" {
-  name          = var.bucket_name
+  name          = var.pdf_repo_bucket_name
   location      = "US"
   force_destroy = true
   lifecycle_rule {
@@ -64,4 +64,26 @@ resource "google_storage_notification" "bucket_notification" {
     google_pubsub_topic_iam_binding.binding,
     google_storage_bucket_iam_member.bucket_role_assignment
   ]
+}
+# config dataflow
+
+resource "google_storage_bucket" "bucket1" {
+    name          = var.doc_ingestion_bucket
+    location      = "US"
+    force_destroy = true
+}
+
+
+# provisioning dataflow stream
+resource "google_dataflow_job" "pubsub_stream" {
+    name = var.dataflow_job_name
+    project = var.project_name
+    template_gcs_path = "gs://${var.doc_ingestion_bucket}/templates/doc_ingestion_template"
+    temp_gcs_location = "gs://${var.doc_ingestion_bucket}/tmp"
+    enable_streaming_engine = true
+    transform_name_mapping = {
+        name = "test_job"
+        env = "test"
+    }
+    on_delete = "cancel"
 }
