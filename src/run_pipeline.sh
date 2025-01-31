@@ -9,3 +9,4 @@ python src/doc_ingestion_pipeline/beam/pipelines/process_pdf.py \
     --temp_location="gs://doc-ingestion-pipeline-dev/tmp" \
     --region="us-central1" \
     --deadletter_file="test"
+    --max_num_workers=2
