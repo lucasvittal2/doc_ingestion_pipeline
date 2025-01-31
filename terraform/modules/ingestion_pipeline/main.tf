@@ -78,12 +78,14 @@ resource "google_storage_bucket" "bucket1" {
 resource "google_dataflow_job" "pubsub_stream" {
     name = var.dataflow_job_name
     project = var.project_name
+    region = var.dataflow_region
     template_gcs_path = "gs://${var.doc_ingestion_bucket}/templates/doc_ingestion_template"
     temp_gcs_location = "gs://${var.doc_ingestion_bucket}/tmp"
+    machine_type = "n1-standard-8"
     enable_streaming_engine = true
     transform_name_mapping = {
-        name = "test_job"
-        env = "test"
+        name = "doc_digest"
+        env = "dev"
     }
     on_delete = "cancel"
 }

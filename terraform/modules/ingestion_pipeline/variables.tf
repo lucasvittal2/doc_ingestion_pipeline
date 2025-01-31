@@ -44,3 +44,8 @@ variable "pdf_repo_bucket_name" {
   description = "The Bucket where pdf will be uploaded"
   type = string
 }
+
+variable "dataflow_region" {
+  description = "dataflow region"
+  type = string
+}

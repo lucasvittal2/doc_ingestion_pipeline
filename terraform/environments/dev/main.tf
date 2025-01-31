@@ -2,6 +2,7 @@ module "ingestion_pipeline" {
   source                     = "../../modules/ingestion_pipeline"
   project_name                   = "bot-especialist-dev"
   region                     = "us-central1"
+  dataflow_region = "us-east4"
   location = "US"
   project_id = "680560386191"
   trigger_topic_name = "ingestion-pipeline-dev"
