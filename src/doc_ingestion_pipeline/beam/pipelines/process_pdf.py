@@ -21,20 +21,12 @@ class ProcessPDFPipelineOptions(PipelineOptions):
             required=True,
             help="Bucket where pdf file path were uploaded",
         )
+
         parser.add_argument(
             "--pub_sub_topic",
             type=str,
             required=True,
-            help="Topic to transmit the pdf upload event to pipeline",
-        )
-        parser.add_argument(
-            "--gcp_project", type=str, required=True, help="project where pipeline runs"
-        )
-        parser.add_argument(
-            "--output_file",
-            type=str,
-            required=True,
-            help="File path to output processed data to ingest on BigQuery",
+            help="Pub/Sub topic for PDF upload events",
         )
         parser.add_argument(
             "--deadletter_file",
@@ -72,7 +64,7 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                 obtain_pdf_from_gcs = (
                     pipeline
                     | "emit GCS event"
-                    >> beam.io.ReadFromPubSub(self.app_configs["PDF_UPLOAD_TOPIC"])
+                    >> beam.io.ReadFromPubSub(custom_options.pub_sub_topic)
                     | "download_pdf"
                     >> beam.ParDo(
                         dofn.DownloadPdfDoFn(self.logger_handler, self.app_configs)
