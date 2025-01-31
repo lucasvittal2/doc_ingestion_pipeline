@@ -1,5 +1,7 @@
 import logging
 
+import google.cloud.logging
+
 
 class LoggerHandler:
     def __init__(
@@ -38,6 +40,10 @@ class LoggerHandler:
         :return: Configured logging.Logger
         """
         logger = logging.getLogger(self.logger_name)
+        if self.logging_type == "gcp_console":
+            client = google.cloud.logging.Client()
+            client.setup_logging()
+
         if not logger.hasHandlers():
             if self.logging_type == "console":
                 ch = logging.StreamHandler()

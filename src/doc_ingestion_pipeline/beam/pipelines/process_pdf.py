@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
     app_configs = read_yaml("assets/configs/app-configs.yaml")
     logger_handler = LoggerHandler(
-        logger_name="[PDF-INGESTION_PIPELINE]", logging_type="console"
+        logger_name="[PDF-INGESTION_PIPELINE]", logging_type="gcp_console"
     )
     process_pdf_pipeline = ProcessPdfPipeline(logger_handler, app_configs)
     process_pdf_pipeline.run()
