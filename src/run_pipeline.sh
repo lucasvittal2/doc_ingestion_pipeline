@@ -10,3 +10,4 @@ python src/doc_ingestion_pipeline/beam/pipelines/process_pdf.py \
     --region="us-east4" \
     --disk_size_gb="50"\
     --deadletter_file="test"
+    --max_num_workers=2
