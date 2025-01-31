@@ -7,5 +7,6 @@ python src/doc_ingestion_pipeline/beam/pipelines/process_pdf.py \
     --pub_sub_topic="projects/bot-especialist-dev/topics/ingestion-pipeline-dev" \
     --template_location="gs://doc-ingestion-pipeline-dev/templates/doc_ingestion_template" \
     --temp_location="gs://doc-ingestion-pipeline-dev/tmp" \
-    --region="us-central1" \
+    --region="us-east4" \
+    --disk_size_gb="50"\
     --deadletter_file="test"
