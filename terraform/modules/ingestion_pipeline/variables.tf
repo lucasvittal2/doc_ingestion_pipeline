@@ -25,22 +25,22 @@ variable "trigger_topic_name"{
   type = string
 }
 
-variable "bucket_name" {
-  description = "The Bucket where pdf will be uploaded"
-  type = string
-}
-
 variable "subscription" {
   description = "The service account used on this project"
   type = string
 }
 
-variable "service_account_id" {
+variable "dataflow_job_name" {
   description = "The service account used on this project"
   type = string
 }
 
-variable "environment" {
+variable "doc_ingestion_bucket" {
   description = "The env of  this project"
+  type = string
+}
+
+variable "pdf_repo_bucket_name" {
+  description = "The Bucket where pdf will be uploaded"
   type = string
 }
