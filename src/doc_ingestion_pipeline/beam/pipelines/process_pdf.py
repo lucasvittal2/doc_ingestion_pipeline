@@ -1,9 +1,11 @@
+import json
 from typing import List
 
 import apache_beam as beam
 from apache_beam.io import WriteToBigQuery
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.transforms.display import DisplayDataItem
+from apache_beam.transforms.window import FixedWindows
 
 from doc_ingestion_pipeline.beam.dofunctions import process_pdf_dofn as dofn
 from doc_ingestion_pipeline.beam.dofunctions.base_dofn import BaseDoFn
@@ -23,7 +25,13 @@ class ProcessPDFPipelineOptions(PipelineOptions):
         )
 
         parser.add_argument(
-            "--pub_sub_topic",
+            "--input_pub_sub_topic",
+            type=str,
+            required=True,
+            help="Pub/Sub topic for PDF upload events",
+        )
+        parser.add_argument(
+            "--output_pub_sub_topic",
             type=str,
             required=True,
             help="Pub/Sub topic for PDF upload events",
@@ -33,6 +41,12 @@ class ProcessPDFPipelineOptions(PipelineOptions):
             type=str,
             required=True,
             help="Deadletter BigQuery Table",
+        )
+        parser.add_argument(
+            "--pub_sub_subscription",
+            type=str,
+            required=True,
+            help="Pub Sub Subscription which transmits bucket upload event",
         )
 
 
@@ -64,7 +78,7 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                 obtain_pdf_from_gcs = (
                     pipeline
                     | "emit GCS event"
-                    >> beam.io.ReadFromPubSub(custom_options.pub_sub_topic)
+                    >> beam.io.ReadFromPubSub(topic=custom_options.input_pub_sub_topic)
                     | "download_pdf"
                     >> beam.ParDo(
                         dofn.DownloadPdfDoFn(self.logger_handler, self.app_configs)
@@ -86,13 +100,6 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                             app_configs=self.app_configs,
                         )
                     )
-                    | "write to AlloyDB"
-                    >> beam.ParDo(  # Add this step
-                        dofn.WriteOnAlloyDbFn(
-                            loggger_hanlder=self.logger_handler,
-                            app_configs=self.app_configs,
-                        )
-                    )
                 )
 
                 write_on_alloydb = extract_topics | "write on alloy db" >> beam.ParDo(
@@ -100,6 +107,24 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                         self.logger_handler,
                         self.app_configs,
                     )
+                )
+
+                # Garantir que apenas um evento final seja enviado para cada PDF processado
+                confirm_processing = (
+                    write_on_alloydb
+                    | "Apply windowing" >> beam.WindowInto(FixedWindows(1))
+                    | "Extract source_doc"
+                    >> beam.Map(
+                        lambda doc: {
+                            "source_doc": doc["source_doc"],
+                            "status": "PDF_PROCESSED",
+                        }
+                    )
+                    | "distinct" >> beam.Distinct()
+                    | "Prepare final message"
+                    >> beam.Map(lambda doc: json.dumps(doc).encode("utf-8"))
+                    | "sign pipeline was finished"
+                    >> beam.io.WriteToPubSub(topic=custom_options.output_pub_sub_topic)
                 )
 
         except Exception as err:
