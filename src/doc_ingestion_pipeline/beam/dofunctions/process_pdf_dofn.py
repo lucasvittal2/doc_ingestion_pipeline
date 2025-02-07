@@ -52,9 +52,9 @@ class GenerateChunksDoFn(BaseDoFn):
 
 
 class ExtractPageTopicDoFn(BaseDoFn):
-    def __init__(self, loggger_hanlder: LoggerHandler, app_configs: dict):
-        self.topic_extractor = OpenAITopicExtractor(loggger_hanlder, app_configs)
-        super().__init__(loggger_hanlder)
+    def __init__(self, logger_hanlder: LoggerHandler, app_configs: dict):
+        self.topic_extractor = OpenAITopicExtractor(logger_hanlder, app_configs)
+        super().__init__(logger_hanlder)
         # self.topic_extractor = OpenAITopicExtractor(logger, app_configs)
 
     def setup(self):
@@ -71,12 +71,12 @@ class ExtractPageTopicDoFn(BaseDoFn):
 class WriteOnAlloyDbFn(BaseDoFn):
     def __init__(
         self,
-        loggger_hanlder: LoggerHandler,
+        logger_hanlder: LoggerHandler,
         app_configs: dict,
         env: str = "DEV",
         batch_size: int = 10,
     ):
-        super().__init__(loggger_hanlder)
+        super().__init__(logger_hanlder)
         self.app_configs = app_configs
         self.env = env
         self.batch_size = batch_size
@@ -161,8 +161,8 @@ class WriteOnAlloyDbFn(BaseDoFn):
 
 
 class DownloadPdfDoFn(BaseDoFn):
-    def __init__(self, loggger_hanlder: LoggerHandler, app_configs: dict):
-        super().__init__(loggger_hanlder)
+    def __init__(self, logger_hanlder: LoggerHandler, app_configs: dict):
+        super().__init__(logger_hanlder)
         self.app_configs = app_configs
 
     def setup(self):
