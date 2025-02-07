@@ -26,7 +26,7 @@ class LoggerHandler:
         self.logging_type = logging_type
         self.log_level = self._log_level_map[log_level]
         self.format = (
-            "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
+            f"[{self.logger_name}] - [%(asctime)s] - [%(levelname)s] - %(message)s"
         )
 
         self._configure_logging()
