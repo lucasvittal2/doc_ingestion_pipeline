@@ -1,5 +1,5 @@
 output "gcs_document_repository" {
-  value = module.ingestion_pipeline.bucket_name
+  value = module.ingestion_pipeline.pdf_repo_bucket_name
 }
 
 output "pubsub_topic_name" {
