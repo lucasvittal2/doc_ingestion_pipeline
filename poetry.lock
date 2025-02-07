@@ -181,38 +181,44 @@ trio = ["trio (>=0.26.1)"]
 
 [[package]]
 name = "apache-beam"
-version = "2.62.0"
+version = "2.59.0"
 description = "Apache Beam SDK for Python"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.8"
 groups = ["main"]
 markers = "python_version <= \"3.11\""
 files = [
-    {file = "apache_beam-2.62.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:b771ad9202816ddd1d887cbe1083b9711b8b3593c0a78f2e85a1d7f5c0adbdac"},
-    {file = "apache_beam-2.62.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:02d33aae5a4cc3acc7a2fb86e3632cdbd240522256778e1da0f6b9192eeef91e"},
-    {file = "apache_beam-2.62.0-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:147491dfde40c9ac0353899fc6632d92d24663c8f9d44ea30157e66752b6f54c"},
-    {file = "apache_beam-2.62.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e65d11b8ac8eb84cbff56fe2aefb6da6449aee07339755138c8bce3d4d7df206"},
-    {file = "apache_beam-2.62.0-cp310-cp310-win32.whl", hash = "sha256:1e8f741de5c66122f5c97f8a6838ab7bfdbe7bbbbdadeef9f91bd0561487c26d"},
-    {file = "apache_beam-2.62.0-cp310-cp310-win_amd64.whl", hash = "sha256:e24db3b37969353f0fdf8c13f2127a391d4483dcb81b2cf6211d37108bd8599a"},
-    {file = "apache_beam-2.62.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:c947f13bf6b8f7904994a3d846fe71ea2b28991373316c205987a42da8df4084"},
-    {file = "apache_beam-2.62.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8843a8306c0548c0224e7f0567de9494552068bd76101b6cc4bef445c3ffa495"},
-    {file = "apache_beam-2.62.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5e5584dd4d68e1f1ace4c1775707afb5309852332ecc4975344bcc8a300d7399"},
-    {file = "apache_beam-2.62.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f28d8a79552fceeaaf0ed0b0f2b41b2143e1013745a5847d7defbb4a6ebfe9a1"},
-    {file = "apache_beam-2.62.0-cp311-cp311-win32.whl", hash = "sha256:bc5dd62c005526c82d6ed1ffde7324e5347c1ff417061b5e63c330dc02e9e601"},
-    {file = "apache_beam-2.62.0-cp311-cp311-win_amd64.whl", hash = "sha256:b61f298a43b7672604a4d3c4f3eef413f6c9b55aeadcacd06631d6ccc319aee8"},
-    {file = "apache_beam-2.62.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:34d353f5a9aeda4a3ee484907b14e2942b9e8f7f8a112b5a98d69663ed4ef68a"},
-    {file = "apache_beam-2.62.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3d5112494e4e672af404a8cb13dce3c12e3e11e5aaae7d78bc1b2c640f1e8c05"},
-    {file = "apache_beam-2.62.0-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:b158b0c0d8a18e0f0b5c32031b61c51e19b12825312d8c01533c61d65b5fbda4"},
-    {file = "apache_beam-2.62.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5044f2e2608d8e52b8267ec0fba250814388dd97c3ca7107d7cad0897895cbb8"},
-    {file = "apache_beam-2.62.0-cp312-cp312-win32.whl", hash = "sha256:3489d45fb04d542061af8f59b908e7a0168da5aacded308bb7825fd43f7068c7"},
-    {file = "apache_beam-2.62.0-cp312-cp312-win_amd64.whl", hash = "sha256:158bce813662a39e2ee504273cc5fc492779703b8f596ef1a3210a62a5263b10"},
-    {file = "apache_beam-2.62.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:8b79b8dc2968321d433d8d353a5b4c86c63e3a16cd9aced62c73e8ce3269d3cb"},
-    {file = "apache_beam-2.62.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c7c1632a29ed785a93e5f9c8bed3e18d962789d06c8acc943f6faf9e24a177b7"},
-    {file = "apache_beam-2.62.0-cp39-cp39-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:c4d5a43bb601520ce5ba30505a1597d2f4f0a02fbf56ca78213565b4c0ae7420"},
-    {file = "apache_beam-2.62.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:04c58ef6827142b39a4c95f3403e388646fde8d88e823c7d4f624b45dea459fa"},
-    {file = "apache_beam-2.62.0-cp39-cp39-win32.whl", hash = "sha256:04e99ef0fd74b645971549a16576f41a7a3c7a5360b67723a906334d70d04be3"},
-    {file = "apache_beam-2.62.0-cp39-cp39-win_amd64.whl", hash = "sha256:f30e40163a23a64a4469ca2c74674eff7b1b5fcfd49c1461565c4aeda978a096"},
-    {file = "apache_beam-2.62.0.tar.gz", hash = "sha256:b9d97df88b9b9e4585fff5ee09959d76b0ab596bb78ae986fac8c04bf8cc78db"},
+    {file = "apache_beam-2.59.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:c9fbbc16d3575559f1c2259d00adf96a2eb0e9a2f708f65d32089e85d2be0239"},
+    {file = "apache_beam-2.59.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b9cfa06daefd356cc318140ad9e0dc66fdbaa93e5a3e59f187d7c74252072fe9"},
+    {file = "apache_beam-2.59.0-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:b3a90d5f9c453442ceccc95c67c918fa28f567759f718d9064ac75ecb985b77e"},
+    {file = "apache_beam-2.59.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:39cae208c16929a8bd2b6d31011de553dd458e88acfee9649dbd72c1617d9c39"},
+    {file = "apache_beam-2.59.0-cp310-cp310-win32.whl", hash = "sha256:bf85fe978889e39b8ac3e52f22ebe8169d48460b637342ba3a8bd2024c3b5ef4"},
+    {file = "apache_beam-2.59.0-cp310-cp310-win_amd64.whl", hash = "sha256:9b33a4a168a895dc5c18b1a4d2b9176f76cb3109bcc8c68cce3573f72e490e6d"},
+    {file = "apache_beam-2.59.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:f1b7c019af38b4f1ff899824dbf8380a6e7245c158814546b62e8b4ab7a1d483"},
+    {file = "apache_beam-2.59.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ea315ec12637c5ca474f3bf7f8afabe9981cf6f1a67ddfff8bef1c8f035b228c"},
+    {file = "apache_beam-2.59.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a97f302b434df44d6f3dcb241c475ebff445f34459425d7f3bbb982011afad81"},
+    {file = "apache_beam-2.59.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fc0788f7313762eaedffbda4e8139e8a65b658a84dc577a5a4e106e4b0a21556"},
+    {file = "apache_beam-2.59.0-cp311-cp311-win32.whl", hash = "sha256:7baea8eb6b021d794552316e8cdccb681d5a7a811727b00fb9d51683e03f3a7c"},
+    {file = "apache_beam-2.59.0-cp311-cp311-win_amd64.whl", hash = "sha256:55e4cbf0f8fc2a759addfd6e58913383c54631c933ee04e280aad058f6cf744c"},
+    {file = "apache_beam-2.59.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:e281ca1e447ee4858984a3c72f1846ec867002e0a31c874b18c440604f745245"},
+    {file = "apache_beam-2.59.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3311cd1ef7848df444c75a2f502bd04b40f6e565c7ca0044da8b9362d4bdca73"},
+    {file = "apache_beam-2.59.0-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0764d1f83b6010e1712d783c5c9bd46c4aa1e8064f00480eb53ef59a64573adb"},
+    {file = "apache_beam-2.59.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:02239d5290f79bf22c651d15d8e8f667da19dcca32922a7cd0acb5cfd78c03ac"},
+    {file = "apache_beam-2.59.0-cp312-cp312-win32.whl", hash = "sha256:abbc1c7b23e340c5091b791545079c14d32ecae0cb7c840f762e9abe6540fe2b"},
+    {file = "apache_beam-2.59.0-cp312-cp312-win_amd64.whl", hash = "sha256:0e834fc077111ad86610f0a69e4ea76f58874f557b9fc08a13476ab03689a0e6"},
+    {file = "apache_beam-2.59.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:db2e7e51565d1b29ce9e599542e3ee716bc36745d9c1253377c9690cfe764d0e"},
+    {file = "apache_beam-2.59.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:eab5b461936751d849decba594c1c0a081492cfeca3fe241eda6bc51816be9b1"},
+    {file = "apache_beam-2.59.0-cp38-cp38-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:8d8e38068783ad3ecab0e2beaab389ff4796375604c9104f7b1e19945e496970"},
+    {file = "apache_beam-2.59.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:269d85a44f32fd279d80b27b0ef8a20e38d2715e5c24d009d90363c4b6b54c86"},
+    {file = "apache_beam-2.59.0-cp38-cp38-win32.whl", hash = "sha256:b428dd82522ad926c2172e8741723b66a6662c9033c744b25fd069e1c8e5e1db"},
+    {file = "apache_beam-2.59.0-cp38-cp38-win_amd64.whl", hash = "sha256:6405ad1612b232acfad2b8def68db7d54cd4b16bd4fdca121bc8bd03c6263fe9"},
+    {file = "apache_beam-2.59.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:1c7a90cebddd5175077bab59cfb1909e5c8a5341c59ea2a7d7622ecd3ac1d829"},
+    {file = "apache_beam-2.59.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:116950f1cf4f5e3769a5f6b5b97b579c7bea71a59dfc82a335d7d8765ca0c655"},
+    {file = "apache_beam-2.59.0-cp39-cp39-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:6324eb39bfaabb4dab6e4210f95d84811c88dcad6577fa6e6e5cc560ba18bea7"},
+    {file = "apache_beam-2.59.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:29294cb3b9033d92c0f1ef4474f42ec45c8dc3eefdb89f6d30a2337ca43452a1"},
+    {file = "apache_beam-2.59.0-cp39-cp39-win32.whl", hash = "sha256:ecf74d123ddd10a114ca47f7b9c74b354121c1c1911da2b05e0e964e86ecbac8"},
+    {file = "apache_beam-2.59.0-cp39-cp39-win_amd64.whl", hash = "sha256:6678d5c9408be842a7f87842925a5468423bb3eed8182c99d34a95541ad0d2b2"},
+    {file = "apache_beam-2.59.0.tar.gz", hash = "sha256:4002abe6c0b872dfba99d4785211d15ec368a0c6f67fe989db5342fba022e260"},
 ]
 
 [package.dependencies]
@@ -241,45 +247,54 @@ google-cloud-spanner = {version = ">=3.0.0,<4", optional = true, markers = "extr
 google-cloud-storage = {version = ">=2.18.2,<3", optional = true, markers = "extra == \"gcp\""}
 google-cloud-videointelligence = {version = ">=2.0,<3", optional = true, markers = "extra == \"gcp\""}
 google-cloud-vision = {version = ">=2,<4", optional = true, markers = "extra == \"gcp\""}
-grpcio = ">=1.33.1,<1.48.0 || >1.48.0,<1.59.dev0 || >1.62.0,<1.62.1 || >1.62.1,<1.66.0"
+grpcio = ">=1.33.1,<1.48.0 || >1.48.0,<1.59.dev0 || >1.62.0,<1.62.1 || >1.62.1,<2"
 hdfs = ">=2.1.0,<3.0.0"
 httplib2 = ">=0.8,<0.23.0"
+js2py = {version = ">=0.74,<1", markers = "python_version < \"3.12\""}
 jsonpickle = ">=3.0.0,<4.0.0"
 jsonschema = ">=4.0.0,<5.0.0"
-"keyrings.google-artifactregistry-auth" = {version = "*", optional = true, markers = "extra == \"gcp\""}
-numpy = ">=1.14.3,<2.3.0"
+numpy = ">=1.14.3,<1.27.0"
 objsize = ">=0.6.1,<0.8.0"
 orjson = ">=3.9.7,<4"
 packaging = ">=22.0"
 proto-plus = ">=1.7.1,<2"
-protobuf = ">=3.20.3,<4.0.dev0 || >=4.1.dev0,<4.21.dev0 || >4.22.0,<4.23.dev0 || >=4.25.dev0,<6.0.0.dev0"
+protobuf = ">=3.20.3,<4.0.dev0 || >=4.1.dev0,<4.21.dev0 || >4.22.0,<4.23.dev0 || ==4.25.*"
 pyarrow = ">=3.0.0,<17.0.0"
 pyarrow-hotfix = "<1"
 pydot = ">=1.2.0,<2"
 pymongo = ">=3.8.0,<5.0.0"
 python-dateutil = ">=2.8.0,<3"
 pytz = ">=2018.3"
-pyyaml = ">=3.12,<7.0.0"
 redis = ">=5.0.0,<6"
 regex = ">=2020.6.8"
 requests = ">=2.24.0,<3.0.0"
-sortedcontainers = ">=2.4.0"
 typing-extensions = ">=3.7.0"
 zstandard = ">=0.18.0,<1"
 
 [package.extras]
 aws = ["boto3 (>=1.9,<2)"]
 azure = ["azure-core (>=1.7.0,<2)", "azure-identity (>=1.12.0,<2)", "azure-storage-blob (>=12.3.2,<13)"]
-dask = ["dask (>=2024.4.2)", "distributed (>=2024.4.2)"]
+dask = ["dask (>=2022.6)", "distributed (>=2022.6)"]
 dataframe = ["pandas (>=1.4.3,!=1.5.0,!=1.5.1,<2.3)"]
-docs = ["Sphinx (>=7.0.0,<8.0)", "docstring-parser (>=0.15,<1.0)", "docutils (>=0.18.1)", "jinja2 (>=3.0,<3.2)", "openai", "pandas (<2.2.0)"]
-gcp = ["cachetools (>=3.1.0,<6)", "google-api-core (>=2.0.0,<3)", "google-apitools (>=0.5.31,<0.5.32)", "google-auth (>=1.18.0,<3)", "google-auth-httplib2 (>=0.1.0,<0.3.0)", "google-cloud-aiplatform (>=1.26.0,<2.0)", "google-cloud-bigquery (>=2.0.0,<4)", "google-cloud-bigquery-storage (>=2.6.3,<3)", "google-cloud-bigtable (>=2.19.0,<3)", "google-cloud-core (>=2.0.0,<3)", "google-cloud-datastore (>=2.0.0,<3)", "google-cloud-dlp (>=3.0.0,<4)", "google-cloud-language (>=2.0,<3)", "google-cloud-pubsub (>=2.1.0,<3)", "google-cloud-pubsublite (>=1.2.0,<2)", "google-cloud-recommendations-ai (>=0.1.0,<0.11.0)", "google-cloud-spanner (>=3.0.0,<4)", "google-cloud-storage (>=2.18.2,<3)", "google-cloud-videointelligence (>=2.0,<3)", "google-cloud-vision (>=2,<4)", "keyrings.google-artifactregistry-auth"]
+docs = ["Sphinx (>=1.5.2,<2.0)", "docstring-parser (>=0.15,<1.0)", "docutils (==0.17.1)", "jinja2 (>=3.0,<3.1)", "pandas (<2.2.0)"]
+gcp = ["cachetools (>=3.1.0,<6)", "google-api-core (>=2.0.0,<3)", "google-apitools (>=0.5.31,<0.5.32)", "google-auth (>=1.18.0,<3)", "google-auth-httplib2 (>=0.1.0,<0.3.0)", "google-cloud-aiplatform (>=1.26.0,<2.0)", "google-cloud-bigquery (>=2.0.0,<4)", "google-cloud-bigquery-storage (>=2.6.3,<3)", "google-cloud-bigtable (>=2.19.0,<3)", "google-cloud-core (>=2.0.0,<3)", "google-cloud-datastore (>=2.0.0,<3)", "google-cloud-dlp (>=3.0.0,<4)", "google-cloud-language (>=2.0,<3)", "google-cloud-pubsub (>=2.1.0,<3)", "google-cloud-pubsublite (>=1.2.0,<2)", "google-cloud-recommendations-ai (>=0.1.0,<0.11.0)", "google-cloud-spanner (>=3.0.0,<4)", "google-cloud-storage (>=2.18.2,<3)", "google-cloud-videointelligence (>=2.0,<3)", "google-cloud-vision (>=2,<4)"]
 interactive = ["facets-overview (>=1.1.0,<2)", "google-cloud-dataproc (>=5.0.0,<6)", "ipykernel (>=6,<7)", "ipython (>=8,<9)", "ipywidgets (>=8,<9)", "jupyter-client (>=6.1.11,!=6.1.13,<8.2.1)", "nbconvert (>=6.2.0,<8)", "nbformat (>=5.0.5,<6)", "pandas (>=1.4.3,!=1.5.0,!=1.5.1,<2.3)", "timeloop (>=1.0.2,<2)"]
 interactive-test = ["chromedriver-binary (>=117,<118)", "needle (>=0.5.0,<1)", "pillow (>=7.1.1,<10)", "urllib3 (>=1.21.1,<2)"]
-ml-test = ["datatable", "embeddings", "onnxruntime", "pillow", "sentence-transformers", "skl2onnx", "tensorflow", "tensorflow-hub", "tensorflow-transform", "tf2onnx", "torch", "transformers"]
-p312-ml-test = ["datatable", "embeddings", "onnxruntime", "pillow", "sentence-transformers", "skl2onnx", "tensorflow", "tensorflow-hub", "tf2onnx", "torch", "transformers"]
-test = ["cryptography (>=41.0.2)", "docstring-parser (>=0.15,<1.0)", "freezegun (>=0.3.12)", "hypothesis (>5.0.0,<7.0.0)", "jinja2 (>=3.0,<3.2)", "joblib (>=1.0.1)", "mock (>=1.0.1,<6.0.0)", "pandas (<2.2.0)", "parameterized (>=0.7.1,<0.10.0)", "psycopg2-binary (>=2.8.5,!=2.9.10,<3.0.0)", "pyhamcrest (>=1.9,!=1.10.0,<3.0.0)", "pytest (>=7.1.2,<8.0)", "pytest-timeout (>=2.1.0,<3)", "pytest-xdist (>=2.5.0,<4)", "requests_mock (>=1.7,<2.0)", "scikit-learn (>=0.20.0)", "setuptools", "sqlalchemy (>=1.3,<3.0)", "tenacity (>=8.0.0,<9)", "testcontainers[mysql] (>=3.0.3,<4.0.0)"]
-yaml = ["docstring-parser (>=0.15,<1.0)", "jinja2 (>=3.0,<3.2)", "js2py (>=0.74,<1)", "pandas (>=1.4.3,!=1.5.0,!=1.5.1,<2.3)", "virtualenv-clone (>=0.5,<1.0)"]
+ml-test = ["datatable", "embeddings", "onnxruntime", "pillow", "sentence-transformers", "skl2onnx", "tensorflow (<2.16.0)", "tensorflow-hub", "tensorflow-transform", "tf2onnx", "torch", "transformers", "xgboost (<2.0)"]
+test = ["cryptography (>=41.0.2)", "docstring-parser (>=0.15,<1.0)", "freezegun (>=0.3.12)", "hypothesis (>5.0.0,<7.0.0)", "jinja2 (>=3.0,<3.1)", "joblib (>=1.0.1)", "mock (>=1.0.1,<6.0.0)", "pandas (<2.2.0)", "parameterized (>=0.7.1,<0.10.0)", "psycopg2-binary (>=2.8.5,<3.0.0)", "pyhamcrest (>=1.9,!=1.10.0,<3.0.0)", "pytest (>=7.1.2,<8.0)", "pytest-timeout (>=2.1.0,<3)", "pytest-xdist (>=2.5.0,<4)", "pyyaml (>=3.12,<7.0.0)", "requests-mock (>=1.7,<2.0)", "scikit-learn (>=0.20.0)", "setuptools", "sqlalchemy (>=1.3,<3.0)", "tenacity (>=8.0.0,<9)", "testcontainers[mysql] (>=3.0.3,<4.0.0)"]
+yaml = ["docstring-parser (>=0.15,<1.0)", "jinja2 (>=3.0,<3.1)", "pandas (>=1.4.3,!=1.5.0,!=1.5.1,<2.3)", "pyyaml (>=3.12,<7.0.0)", "virtualenv-clone (>=0.5,<1.0)"]
+
+[[package]]
+name = "apitools"
+version = "0.1.4"
+description = "Tools to play with json-schema and rest apis"
+optional = false
+python-versions = "*"
+groups = ["main"]
+markers = "python_version <= \"3.11\""
+files = [
+    {file = "apitools-0.1.4.tar.gz", hash = "sha256:934f00ee57a4723b853dd572dc9ba4ef765a6e1390d739b4b3187ba3646311b9"},
+]
 
 [[package]]
 name = "astroid"
@@ -1736,15 +1751,15 @@ tqdm = ["tqdm (>=4.7.4,<5.0.0dev)"]
 
 [[package]]
 name = "google-cloud-bigquery-storage"
-version = "2.27.0"
+version = "2.28.0"
 description = "Google Cloud Bigquery Storage API client library"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 markers = "python_version <= \"3.11\""
 files = [
-    {file = "google_cloud_bigquery_storage-2.27.0-py2.py3-none-any.whl", hash = "sha256:3bfa8f74a61ceaffd3bfe90be5bbef440ad81c1c19ac9075188cccab34bffc2b"},
-    {file = "google_cloud_bigquery_storage-2.27.0.tar.gz", hash = "sha256:522faba9a68bea7e9857071c33fafce5ee520b7b175da00489017242ade8ec27"},
+    {file = "google_cloud_bigquery_storage-2.28.0-py2.py3-none-any.whl", hash = "sha256:7f4a42e614b6173f6d7da75eda3913aa03f74854d3e5e9b1ab462c8468d4deed"},
+    {file = "google_cloud_bigquery_storage-2.28.0.tar.gz", hash = "sha256:310c2dcc7d0a03b8e3b30ee90f34daf0bdefdb198c51a7f38db45904704f131c"},
 ]
 
 [package.dependencies]
@@ -2793,6 +2808,24 @@ files = [
 ]
 
 [[package]]
+name = "js2py"
+version = "0.74"
+description = "JavaScript to Python Translator & JavaScript interpreter written in 100% pure Python."
+optional = false
+python-versions = "*"
+groups = ["main"]
+markers = "python_version <= \"3.11\""
+files = [
+    {file = "Js2Py-0.74-py3-none-any.whl", hash = "sha256:40a508a79e2f8d624e3f2e604f90a1e6f46ac75b416d7f4745939ff4a2e95e09"},
+    {file = "Js2Py-0.74.tar.gz", hash = "sha256:39f3a6aa8469180efba3c8677271df27c31332fd1b471df1af2af58b87b8972f"},
+]
+
+[package.dependencies]
+pyjsparser = ">=2.5.1"
+six = ">=1.10"
+tzlocal = ">=1.2"
+
+[[package]]
 name = "jsonpatch"
 version = "1.33"
 description = "Apply JSON-Patches (RFC 6902)"
@@ -2910,29 +2943,6 @@ doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linke
 enabler = ["pytest-enabler (>=2.2)"]
 test = ["pyfakefs", "pytest (>=6,!=8.1.*)"]
 type = ["pygobject-stubs", "pytest-mypy", "shtab", "types-pywin32"]
-
-[[package]]
-name = "keyrings-google-artifactregistry-auth"
-version = "1.1.2"
-description = "Keyring backend for Google Auth tokens"
-optional = false
-python-versions = ">=3.6"
-groups = ["main"]
-markers = "python_version <= \"3.11\""
-files = [
-    {file = "keyrings.google-artifactregistry-auth-1.1.2.tar.gz", hash = "sha256:bd6abb72740d2dfeb4a5c03c3b105c6f7dba169caa29dee3959694f1f02c77de"},
-    {file = "keyrings.google_artifactregistry_auth-1.1.2-py3-none-any.whl", hash = "sha256:e3f18b50fa945c786593014dc225810d191671d4f5f8e12d9259e39bad3605a3"},
-]
-
-[package.dependencies]
-google-auth = "*"
-keyring = "*"
-pluggy = "*"
-requests = "*"
-
-[package.extras]
-testing = ["pytest (>=3.5,!=3.7.3)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=1.2.3)", "pytest-cov", "pytest-flake8", "pytest-mypy"]
-tox = ["tox"]
 
 [[package]]
 name = "langchain"
@@ -4495,7 +4505,7 @@ version = "1.5.0"
 description = "plugin and hook calling mechanisms for python"
 optional = false
 python-versions = ">=3.8"
-groups = ["main", "dev_latest"]
+groups = ["dev_latest"]
 markers = "python_version <= \"3.11\""
 files = [
     {file = "pluggy-1.5.0-py3-none-any.whl", hash = "sha256:44e1ad92c8ca002de6377e165f3e0f1be63266ab4d554740532335b9d75ea669"},
@@ -4973,6 +4983,19 @@ files = [
 
 [package.extras]
 windows-terminal = ["colorama (>=0.4.6)"]
+
+[[package]]
+name = "pyjsparser"
+version = "2.7.1"
+description = "Fast javascript parser (based on esprima.js)"
+optional = false
+python-versions = "*"
+groups = ["main"]
+markers = "python_version <= \"3.11\""
+files = [
+    {file = "pyjsparser-2.7.1-py2-none-any.whl", hash = "sha256:2b12842df98d83f65934e0772fa4a5d8b123b3bc79f1af1789172ac70265dd21"},
+    {file = "pyjsparser-2.7.1.tar.gz", hash = "sha256:be60da6b778cc5a5296a69d8e7d614f1f870faf94e1b1b6ac591f2ad5d729579"},
+]
 
 [[package]]
 name = "pylint"
@@ -5916,19 +5939,6 @@ files = [
 ]
 
 [[package]]
-name = "sortedcontainers"
-version = "2.4.0"
-description = "Sorted Containers -- Sorted List, Sorted Dict, Sorted Set"
-optional = false
-python-versions = "*"
-groups = ["main"]
-markers = "python_version <= \"3.11\""
-files = [
-    {file = "sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"},
-    {file = "sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88"},
-]
-
-[[package]]
 name = "soupsieve"
 version = "2.6"
 description = "A modern CSS selector implementation for Beautiful Soup."
@@ -6339,6 +6349,25 @@ files = [
 ]
 
 [[package]]
+name = "tzlocal"
+version = "5.2"
+description = "tzinfo object for the local timezone"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+markers = "python_version <= \"3.11\""
+files = [
+    {file = "tzlocal-5.2-py3-none-any.whl", hash = "sha256:49816ef2fe65ea8ac19d19aa7a1ae0551c834303d5014c6d5a62e4cbda8047b8"},
+    {file = "tzlocal-5.2.tar.gz", hash = "sha256:8d399205578f1a9342816409cc1e46a93ebd5755e39ea2d85334bea911bf0e6e"},
+]
+
+[package.dependencies]
+tzdata = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+devenv = ["check-manifest", "pytest (>=4.3)", "pytest-cov", "pytest-mock (>=3.3)", "zest.releaser"]
+
+[[package]]
 name = "urllib3"
 version = "2.3.0"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -6740,4 +6769,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.12"
-content-hash = "26c1ee8367e32841a274f3ff3c1e824a317316f75628707c5c95ca3c0e79f69d"
+content-hash = "83fc7e8e56af56e69ad028c40cb04a6f9a5867a81aa7610631b0df561687d6f1"
