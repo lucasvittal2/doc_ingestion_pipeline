@@ -12,7 +12,7 @@ tiktoken = "0.7.0"
 mypy = "^1.0.0"
 toml = "^0.10.2"
 google-cloud-secret-manager = "2.20.0"
-apache-beam = {extras = ["gcp"], version = "^2.62.0"}
+apache-beam = {version = "2.59.0", extras = ["gcp"]}
 pyyaml = "^6.0"
 pyarrow = "16.1.0"
 Flask-Session="0.5.0"
@@ -43,6 +43,7 @@ langchain-google-alloydb-pg = "^0.9.1"
 langchain-google-vertexai = "^2.0.12"
 google-cloud-pubsub = "^2.27.3"
 google-cloud-logging = "^3.11.4"
+apitools = "^0.1.4"
 
 [poetry.group.dev.dependencies]
 bandit = "^1.7.7"
