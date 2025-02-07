@@ -2,7 +2,6 @@ import json
 from typing import List
 
 import apache_beam as beam
-from apache_beam.io import WriteToBigQuery
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.transforms.display import DisplayDataItem
 from apache_beam.transforms.window import FixedWindows
@@ -37,12 +36,6 @@ class ProcessPDFPipelineOptions(PipelineOptions):
             help="Pub/Sub topic for PDF upload events",
         )
         parser.add_argument(
-            "--deadletter_file",
-            type=str,
-            required=True,
-            help="Deadletter BigQuery Table",
-        )
-        parser.add_argument(
             "--pub_sub_subscription",
             type=str,
             required=True,
@@ -67,7 +60,7 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
             ),
         ]
 
-    def run(self, argv=None):
+    def run(self, window_size=1.0, num_shards=5, argv=None):
         pipeline_options = PipelineOptions(argv)
         custom_options = pipeline_options.view_as(ProcessPDFPipelineOptions)
 
@@ -79,6 +72,7 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                     pipeline
                     | "emit GCS event"
                     >> beam.io.ReadFromPubSub(topic=custom_options.input_pub_sub_topic)
+                    | "Window into" >> beam.WindowInto(FixedWindows(1))
                     | "download_pdf"
                     >> beam.ParDo(
                         dofn.DownloadPdfDoFn(self.logger_handler, self.app_configs)
@@ -96,7 +90,7 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                     | "topic extraction"
                     >> beam.ParDo(
                         dofn.ExtractPageTopicDoFn(
-                            loggger_hanlder=self.logger_handler,
+                            logger_hanlder=self.logger_handler,
                             app_configs=self.app_configs,
                         )
                     )
@@ -139,7 +133,7 @@ if __name__ == "__main__":
 
     app_configs = read_yaml("assets/configs/app-configs.yaml")
     logger_handler = LoggerHandler(
-        logger_name="[PDF-INGESTION_PIPELINE]", logging_type="gcp_console"
+        logger_name="PDF-INGESTION-PIPELINE", logging_type="gcp_console"
     )
     process_pdf_pipeline = ProcessPdfPipeline(logger_handler, app_configs)
     process_pdf_pipeline.run()
