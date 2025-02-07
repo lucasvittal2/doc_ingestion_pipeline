@@ -1,6 +1,6 @@
 #* Variables
 SHELL := /usr/bin/env bash
-PYTHON := python3.10
+PYTHON := python3.11
 PYTHONPATH := $(shell pwd)
 
 #* Set POETRY to the path of the Poetry executable
@@ -39,29 +39,29 @@ create-venv:
 	else \
 		printf "[Makefile] - Homebrew is already installed!\n"; \
 	fi
-	@printf "[Makefile] - Ensuring 3.10 is installed...\n"
-	@if ! brew list python@3.10 > /dev/null 2>&1; then \
-		printf "[Makefile] - 3.10 not found. Installing 3.10 via Homebrew...\n"; \
-		brew install python@3.10; \
+	@printf "[Makefile] - Ensuring 3.11 is installed...\n"
+	@if ! brew list python@3.11 > /dev/null 2>&1; then \
+		printf "[Makefile] - 3.11 not found. Installing 3.11 via Homebrew...\n"; \
+		brew install python@3.11; \
 	else \
-		printf "[Makefile] - 3.10 is already installed!\n"; \
+		printf "[Makefile] - 3.11 is already installed!\n"; \
 	fi
-	@printf "[Makefile] - Linking 3.10 to be the default Python...\n"
-	@brew link --overwrite python@3.10
-	@printf "[Makefile] - Creating a virtual environment named 'doc-ingestion-pipeline-3.10'...\n"
-	@if [ ! -d "doc-ingestion-pipeline-3.10" ]; then \
-		python3.10 -m venv doc-ingestion-pipeline-3.10; \
+	@printf "[Makefile] - Linking 3.11 to be the default Python...\n"
+	@brew link --overwrite python@3.11
+	@printf "[Makefile] - Creating a virtual environment named 'doc-ingestion-pipeline-3.11'...\n"
+	@if [ ! -d "doc-ingestion-pipeline-3.11" ]; then \
+		python3.11 -m venv doc-ingestion-pipeline-3.11; \
 	else \
-		printf "[Makefile] - Virtual environment 'doc-ingestion-pipeline-3.10' already exists!\n"; \
+		printf "[Makefile] - Virtual environment 'doc-ingestion-pipeline-3.11' already exists!\n"; \
 	fi
 	@printf "[Makefile] - Virtual environment setup complete. To activate, run:\n"
-	@printf "[Makefile] - 'source doc-ingestion-pipeline-3.10/bin/activate'\n"
+	@printf "[Makefile] - 'source doc-ingestion-pipeline-3.11/bin/activate'\n"
 
 #* Activate the virtual environment
 .PHONY: activate-venv
 activate-venv:
-	@printf "[Makefile] - Activating the virtual environment 'doc-ingestion-pipeline-3.10'...\n"
-	@source doc-ingestion-pipeline-3.10/bin/activate && printf "[Makefile] - Virtual environment activated!\n"
+	@printf "[Makefile] - Activating the virtual environment 'doc-ingestion-pipeline-3.11'...\n"
+	@source doc-ingestion-pipeline-3.11/bin/activate && printf "[Makefile] - Virtual environment activated!\n"
 
 
 .PHONY: poetry-download
@@ -118,7 +118,7 @@ poetry-update:
 
 .PHONY: pre-commit-install
 pre-commit-install:
-	@sudo apt install python3.10-distutils
+	@sudo apt install python3.11-distutils
 	@$(POETRY) add pre-commit=
 	@$(POETRY) run pre-commit install
 	@printf "[Makefile] - Pre-commit hooks installed.\n\n"
