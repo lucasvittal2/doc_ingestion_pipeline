@@ -1,4 +1,5 @@
 import json
+import os
 from typing import List
 
 import apache_beam as beam
@@ -46,9 +47,10 @@ class ProcessPDFPipelineOptions(PipelineOptions):
 class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
     def __init__(self, logger_handler: LoggerHandler, app_configs: dict):
 
-        super().__init__(logger_handler)
         self.app_configs = app_configs
         self.logger_handler = logger_handler
+        self.logger = logger_handler.get_logger()
+        self.OPENAI_API_KEY = app_configs["OPENAI_API_KEY"]
 
     def display_data(self) -> List[DisplayDataItem]:
         return [
@@ -63,6 +65,7 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
     def run(self, window_size=1.0, num_shards=5, argv=None):
         pipeline_options = PipelineOptions(argv)
         custom_options = pipeline_options.view_as(ProcessPDFPipelineOptions)
+        os.environ["OPENAI_API_KEY"] = self.OPENAI_API_KEY
 
         try:
             self.logger.info("Starting Process Pdf Beam Pipeline...")
@@ -72,7 +75,7 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                     pipeline
                     | "emit GCS event"
                     >> beam.io.ReadFromPubSub(topic=custom_options.input_pub_sub_topic)
-                    | "Window into" >> beam.WindowInto(FixedWindows(1))
+                    | "Window into" >> beam.WindowInto(FixedWindows(60))
                     | "download_pdf"
                     >> beam.ParDo(
                         dofn.DownloadPdfDoFn(self.logger_handler, self.app_configs)
@@ -127,9 +130,6 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
 
 
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-
-    load_dotenv(".env")
 
     app_configs = read_yaml("assets/configs/app-configs.yaml")
     logger_handler = LoggerHandler(
