@@ -1,6 +1,7 @@
 import asyncio
 import gc
 import logging
+import os
 import uuid
 from typing import Any, List, Union
 
@@ -15,12 +16,18 @@ from doc_ingestion_pipeline.models.connections import AlloyDBConnection
 
 
 class AlloyDB:
-    def __init__(self, connection: AlloyDBConnection, embedding_model: Embeddings):
+    def __init__(
+        self,
+        connection: AlloyDBConnection,
+        embedding_model: Embeddings,
+        openai_key: str,
+    ):
         self.engine: Union[AlloyDBEngine, None] = None
         self.connection = connection
         self.embedding_model = embedding_model
         self.db_schema = connection.db_schema
         self.vector_store: Union[AlloyDBVectorStore, None] = None
+        self.openai_key = openai_key
 
     async def __aenter__(self):
         """Async context manager for initializing resources."""
@@ -43,10 +50,9 @@ class AlloyDB:
 
         logging.info("Closed all connections related with AlloyDB.")
 
-    @staticmethod
-    async def __close_all_sessions_and_connections():
+    async def __close_all_sessions_and_connections(self):
         """Close all open aiohttp sessions and their connections."""
-
+        os.environ["OPENAI_API_KEY"] = self.openai_key
         sessions = [
             obj for obj in gc.get_objects() if isinstance(obj, aiohttp.ClientSession)
         ]
