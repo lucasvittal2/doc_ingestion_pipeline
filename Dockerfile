@@ -36,6 +36,7 @@ WORKDIR /doc_ingestion_pipeline
 
 # Copy the built wheel and prompt from the builder stage
 COPY --from=builder /doc_ingestion_pipeline/dist /doc_ingestion_pipeline/dist
+COPY --from=builder /opt/apache/beam /opt/apache/beam
 
 #Create local pdf repository
 RUN mkdir -p assets/pdf
@@ -43,6 +44,9 @@ RUN mkdir -p assets/configs
 
 #Copy config file
 COPY assets/configs/app-configs.yaml ./assets/configs/app-configs.yaml
+
+#set openaikey
+
 
 # Install the built wheel
 RUN pip install --no-cache-dir /doc_ingestion_pipeline/dist/*.whl
@@ -54,6 +58,4 @@ ENV PYTHONPATH="/doc_ingestion_pipeline:${PYTHONPATH}"
 RUN python -c "import doc_ingestion_pipeline; print(doc_ingestion_pipeline.__file__)"
 
 # Set the entrypoint for the container
-#ENTRYPOINT ["/opt/apache/beam/boot"]
-
-ENTRYPOINT ["python", "-c", "import doc_ingestion_pipeline; print(doc_ingestion_pipeline.__file__)"]
+ENTRYPOINT ["/opt/apache/beam/boot"]
