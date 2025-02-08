@@ -55,7 +55,6 @@ class ExtractPageTopicDoFn(BaseDoFn):
     def __init__(self, logger_hanlder: LoggerHandler, app_configs: dict):
         self.topic_extractor = OpenAITopicExtractor(logger_hanlder, app_configs)
         super().__init__(logger_hanlder)
-        # self.topic_extractor = OpenAITopicExtractor(logger, app_configs)
 
     def setup(self):
         super().setup()
@@ -97,7 +96,9 @@ class WriteOnAlloyDbFn(BaseDoFn):
             model_name=vectordb_configs["EMBEDDING_MODEL"],
             project=self.app_configs["GCP_PROJECT"],
         )
-        self.alloydb_handler = AlloyDB(connection, embedding_model)
+        self.alloydb_handler = AlloyDB(
+            connection, embedding_model, openai_key=self.app_configs["OPENAI_API_KEY"]
+        )
         super().setup()
 
     async def __add_records_batch(self, records: List[Dict]):
@@ -128,7 +129,7 @@ class WriteOnAlloyDbFn(BaseDoFn):
     @BaseDoFn.gauge
     def process(self, element: Dict[str, str], *args, **kwargs):
         try:
-            self.logger.info(f"Processing element: {element}")
+            self.logger.info(f" Writting element on AlloyDB: {element}")
             metadata = {col: element[col] for col in self.metadata_cols}
 
             record = {
