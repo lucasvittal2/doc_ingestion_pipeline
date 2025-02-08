@@ -32,14 +32,21 @@ BEAM_VERSION = os.environ.get("BEAM_VERSION", "2.59.0")
 
 dependencies = [
     f"apache-beam[gcp]=={BEAM_VERSION}",
-    "aiohttp==3.11.9",
+    "aiohttp==3.11.11",
+    "pydantic==2.10.6",
     "tiktoken==0.8.0",
     "openai==1.55.3",
     "scikit-learn==1.5.1",
-    "google-cloud-secret-manager==2.20.0",
-    "google-cloud-bigquery==3.26.0",
+    "google-cloud-storage==2.19.0",
+    "google-cloud-logging==3.11.4",
     "uvicorn==0.34.0",
     "fastapi==0.115.6",
+    "langchain-google-vertexai==2.0.12",
+    "llama-index==0.12.13",
+    "langchain-google-alloydb-pg==0.9.1",
+    "langchain-openai",
+    "langchain-core==0.3.31",
+    "langchain==0.3.15",
 ]
 
 setuptools.setup(
