@@ -10,5 +10,4 @@ module "ingestion_pipeline" {
   pdf_repo_bucket_name= "pdf-repository-dev-150030916493"
   doc_ingestion_bucket = "doc-ingestion-pipeline-dev"
   dataflow_job_name = "doc-ingestion-pipeline-dev-JOB"
-
 }
