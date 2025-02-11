@@ -1,7 +1,6 @@
 .idea
 /.venv/
 /assets/tests
-/assets/configs/
 /.env
 /assets/configs/app-configs.yaml
 /assets/pdf/fundamentals-data-engineering-robust-29-57.pdf
@@ -13,4 +12,4 @@
 /dist/
 /.venv1/
 /doc-ingestion-pipeline-3.11/
-/assets/pdf/optimization_stephen_boyid-15-17.pdf
+/assets/pdf/
