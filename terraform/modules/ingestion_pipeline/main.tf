@@ -52,13 +52,6 @@ resource "google_storage_bucket_iam_member" "pdf_repo_role" {
   member = "serviceAccount:${google_service_account.terraform_sa.email}"
 }
 
-resource "google_storage_bucket" "doc_ingestion" {
-  project = var.project_name
-  name          = var.doc_ingestion_bucket
-  location      = "US"
-  force_destroy = true
-}
-
 resource "google_compute_network" "default" {
   name                    = "default-network"
   auto_create_subnetworks = true
@@ -78,7 +71,6 @@ resource "google_dataflow_job" "pubsub_stream" {
   on_delete = "cancel"
 
   depends_on = [
-    google_storage_bucket.doc_ingestion,
     google_storage_bucket_iam_member.pdf_repo_role,
     google_project_iam_member.terraform_roles
   ]
