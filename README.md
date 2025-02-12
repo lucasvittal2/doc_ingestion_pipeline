@@ -37,15 +37,15 @@ An ilustration of all system can be seen below:
 
 ### Steps
 
-1 - Install all dependencies and set up project locally
+1. - Install all dependencies and set up project locally
 ```sh
-  >$ make init
+  $> make init
 ```
-2 - Replace all tags to your projects and resources configuration on `app-configs-example.yaml` and rename it to `app-configs.yaml`
-3 -  Got to `terraform/environments/dev/main.tf` and change all configs commented according your project configuration
-4 - Provision all resourcer need for project running:
+2. - Replace all tags to your projects and resources configuration on `app-configs-example.yaml` and rename it to `app-configs.yaml`
+3. -  Got to `terraform/environments/dev/main.tf` and change all configs commented according your project configuration
+4. - Provision all resourcer need for project running:
 ```shell
->$ src/bash/provisioning.sh \
+$> src/bash/provisioning.sh \
    --env dev \
    --project-id "<PROJECT_ID>" \
    --pipeline-bucket "doc-ingestion-pipeline-dev-<PROJECT_NUMBER>" \
@@ -54,9 +54,10 @@ An ilustration of all system can be seen below:
    --project-number "<PROJECT_NUMBER>" \
    --region "<REGION>"
 ```
-5 - Go to your pdf bucket repository and upload a pdf file there\
-6 - Go to dataflow worker logs a see magic happening\
-7 - After the pipeline finished to run you can check if data were properly saved on AlloyDB postgres database with:
+6. On google  cloud console go to AlloyDB > Clusters > Click 3 dot in any instance > edit > enable public ip address
+Go to your pdf bucket repository and upload a pdf file there\
+7. Go to dataflow worker logs a see magic happening\
+8.  After the pipeline finished to run you can check if data were properly saved on AlloyDB postgres database with:
 ```sql
 SELECT * FROM bot-brain;
 ```
