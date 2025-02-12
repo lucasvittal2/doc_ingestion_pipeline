@@ -55,9 +55,9 @@ $> src/bash/provisioning.sh \
    --region "<REGION>"
 ```
 6. On google  cloud console go to AlloyDB > Clusters > Click 3 dot in any instance > edit > enable public ip address
-Go to your pdf bucket repository and upload a pdf file there\
-7. Go to dataflow worker logs a see magic happening\
-8.  After the pipeline finished to run you can check if data were properly saved on AlloyDB postgres database with:
+7. Go to your pdf bucket repository and upload a pdf file there\
+8. Go to dataflow worker logs a see magic happening\
+9. After the pipeline finished to run you can check if data were properly saved on AlloyDB postgres database with:
 ```sql
 SELECT * FROM bot-brain;
 ```
