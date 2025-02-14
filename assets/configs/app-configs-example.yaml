@@ -1,0 +1,34 @@
+GCP_PROJECT: "the-bot-specialist"
+PDF_UPLOAD_TOPIC : "projects/the-bot-specialist-dev/topics/ingestion-pipeline-dev"
+PDF_BUCKET_REPOSITORY: "pdf-repository-dev-<PROJECT_NUMBER>"
+OPENAI_API_KEY: "<OPENAI_API_KEY>"
+TOPIC_EXTRACTION:
+  PROMPT: 'You are a professional content analyzer, and your primary role is to identify and extract the most relevant keywords from a given text. Your goal is to focus on the main ideas, themes, and key phrases that best represent the text’s content.\n\nRegarding the text below:\n    \t\n{text}\n\nPlease follow these steps:\n\n1. Carefully read the entire text to understand its core topics and main ideas.\n\n2. Extract 5 relevant keywords or key phrases that accurately reflect the key concepts discussed in the article. Focus on terms that someone might use to search for this type of content online.\n\n3. Avoid common stop words like "the", "and", or "with". Also, avoid overly generic terms unless they are critical to the topic.\n\n4. Prioritize phrases over single words where it makes sense, especially if the phrase better captures a core idea (e.g., "artificial intelligence" instead of just "intelligence").\n\n5. Present the keywords as a comma-separated list at the end of your response for easy readability.\n6. Avoid redundant keywords not repeating keywords\n\nYour goal is to deliver a concise list of keywords that captures the essence of the article in a way that would be useful for document searching\n\nexample of output:\n\nartificial intelligence,deep learning,topic extraction,language interpretation'
+  LLM_TEMPERATURE: 0
+  LLM_MODEL: gpt4o-mini
+
+VECTOR_STORE:
+  EMBEDDING_MODEL: "textembedding-gecko@latest"
+  EMBEDDING_DIMENSION: 768
+  METADATA_COLUMNS: ["source_doc", "page_number", "topics"]
+  ID_COLUMN: "id"
+  CONTENT_COLUMN: "text"
+  EMBEDDING_COLUMN: "embedding"
+
+CONNECTIONS:
+  ALLOYDB:
+    DEV:
+      connection_name: "<ALLOYDB_CONNECTION_STRING>"
+      region: "<PROJECT_DEFAULT_REGION>"
+      cluster: "<CLUSTER_NAME>"
+      instance: "<ALLOYDB_INSTANCE_NAME>"
+      database: "<DATABASE_NAME>"
+      table_name: "bot-brain"
+      project_id: "the-bot-specialist"
+      db_schema: "public"
+      db_host: "<INSTANCE_PUBLIC_ADDRESS>"
+      db_user: "user-dev"
+      db_password: "<USER_PASSWORD>"
+      db_port: 5432
+      db_name: "<DATABASE_NAME>"
+      use_private_ip: False
