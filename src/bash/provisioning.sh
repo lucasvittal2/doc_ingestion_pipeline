@@ -166,7 +166,7 @@ create_project_gcp_resources() {
   echo ""
   echo "☁️ Starting GCP resource provisioning..."
   echo ""
-
+  REGION=$1
   PROJECT_DIR=$(pwd)
   cd terraform/environments/dev
 
@@ -182,6 +182,21 @@ create_project_gcp_resources() {
   echo "✅ GCP resources provisioned successfully!"
   echo ""
 
+  #Setting up alloydb
+  echo "Setting up alloyDB..."
+  export ALLOY_CLUSTER_ID=$(terraform output alloydb_cluster_id)  | awk -F'/' '{print $NF}'
+  export ALLOY_INSTANCE_ID=$(terraform output alloydb_primary_instance_id) | awk -F'/' '{print $NF}'
+  echo "ALLOY_CLUSTER $ALLOY_CLUSTER_ID"
+  gcloud alloydb instances update "$ALLOY_INSTANCE_ID" \
+    --cluster="$ALLOY_CLUSTER_ID"  \
+    --region="$REGION"  \
+    --assign-inbound-public-ip=ASSIGN_IPV4
+    --database-flags=password.enforce_complexity=on
+
+  gcloud alloydb users create "user-dev" \
+  --password="admin-dev" \
+  --cluster="$CLUSTER_ID" \
+  --region="$REGION_ID"
   cd "$PROJECT_DIR"
 }
 
@@ -240,4 +255,4 @@ build_container "$REGISTRY_URL"
 create_artifact_repo "$REPOSITORY_NAME" "$PROJECT_ID"
 push_container_gcp "$REGISTRY_URL"
 create_pipeline_template "$PROJECT_ID" "$PROJECT_NUMBER" "$REGION" "$REPOSITORY_NAME" "$ENV"
-create_project_gcp_resources
+create_project_gcp_resources "$REGION"
