@@ -54,28 +54,21 @@ $> src/bash/provisioning.sh \
    --project-number "<PROJECT_NUMBER>" \
    --region "<REGION>"
 ```
-5. On google  cloud console go to AlloyDB > Clusters > Click 3 dot in any instance > edit > enable public ip address
-6. Go to GCP console and search for alloyDB, then go to cluster tab, then click on 3 dot in one of instance cluster:
-
-
-![img_1.png](assets/images/alloydb_edit.png)
-7. Enable public IP Access on AlloyDB Cluster then click on 'update instance' button to save new configs
-
 ![img_1.png](assets/images/enable_publicip.png)
-8. Copy the public IP Address of instance, then replace tag '<INSTANCE_PUBLIC_ADDRESS>' on `app-config.yml` by the instance public IP address
+5. Copy the public IP Address of instance, then replace tag '<INSTANCE_PUBLIC_ADDRESS>' on `app-config.yml` by the instance public IP address
 ![img.png](assets/images/public_ipadd.png)
-9. Click on instance at alloyDB cluster tab:
+6. Click on instance at alloyDB cluster tab:
 ![img.png](assets/images/img99.png)
-10. Got to Users tab then create a username and password according your preference, then click add to add new user:
+7. Got to Users tab then create a username and password according your preference, then click add to add new user:
 ![img_2.png](assets/images/img_2.png)!
-11. Go to AlloyDB Studio tab then login
+8. Go to AlloyDB Studio tab then login
 ![img_2.png](assets/images/img_2.png)
-12. Create `bot-brain` table running the query at `src/queries/creaete_brain_table.sql`
+9. Create `bot-brain` table running the query at `src/queries/creaete_brain_table.sql`
 ![img_3.png](assets/images/img_3.png)
-13. Go to your pdf bucket repository and upload a pdf file there\
-14. Go to dataflow worker logs a see magic happening\
+10. Go to your pdf bucket repository and upload a pdf file there\
+11. Go to dataflow worker logs a see magic happening\
 
-15. After the pipeline finished to run you can check if data were properly saved on AlloyDB postgres database with:
+12. After the pipeline finished to run you can check if data were properly saved on AlloyDB postgres database with:
 ```sql
 SELECT * FROM bot-brain;
 ```
