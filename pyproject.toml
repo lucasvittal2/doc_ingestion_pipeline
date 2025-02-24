@@ -11,7 +11,7 @@ python = ">=3.10,<3.12"
 tiktoken = "0.7.0"
 mypy = "^1.0.0"
 toml = "^0.10.2"
-google-cloud-secret-manager = "2.20.0"
+google-cloud-secret-manager = "2.10.0"
 apache-beam = {version = "2.59.0", extras = ["gcp"]}
 pyyaml = "^6.0"
 pyarrow = "16.1.0"
