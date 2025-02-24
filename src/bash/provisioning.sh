@@ -184,19 +184,21 @@ create_project_gcp_resources() {
 
   #Setting up alloydb
   echo "Setting up alloyDB..."
-  export ALLOY_CLUSTER_ID=$(terraform output alloydb_cluster_id)  | awk -F'/' '{print $NF}'
-  export ALLOY_INSTANCE_ID=$(terraform output alloydb_primary_instance_id) | awk -F'/' '{print $NF}'
+  export ALLOY_CLUSTER_ID=$(terraform output alloydb_cluster_id | awk -F'/' '{print $NF}' | sed s/\"//g)
+  export ALLOY_INSTANCE_ID=$(terraform output alloydb_primary_instance_id | awk -F'/' '{print $NF}' | sed s/\"//g)
   echo "ALLOY_CLUSTER $ALLOY_CLUSTER_ID"
   gcloud alloydb instances update "$ALLOY_INSTANCE_ID" \
     --cluster="$ALLOY_CLUSTER_ID"  \
     --region="$REGION"  \
-    --assign-inbound-public-ip=ASSIGN_IPV4
+    --assign-inbound-public-ip=ASSIGN_IPV4 \
     --database-flags=password.enforce_complexity=on
 
   gcloud alloydb users create "user-dev" \
   --password="admin-dev" \
-  --cluster="$CLUSTER_ID" \
-  --region="$REGION_ID"
+  --cluster="$ALLOY_CLUSTER_ID" \
+  --region="$REGION"\
+  --superuser="true"
+
   cd "$PROJECT_DIR"
 }
 
