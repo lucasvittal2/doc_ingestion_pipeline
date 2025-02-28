@@ -5,7 +5,6 @@ from typing import List
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.transforms.display import DisplayDataItem
-from apache_beam.transforms.window import FixedWindows
 
 from doc_ingestion_pipeline.beam.dofunctions import process_pdf_dofn as dofn
 from doc_ingestion_pipeline.beam.dofunctions.base_dofn import BaseDoFn
@@ -22,25 +21,6 @@ class ProcessPDFPipelineOptions(PipelineOptions):
             type=str,
             required=True,
             help="Bucket where pdf file path were uploaded",
-        )
-
-        parser.add_argument(
-            "--input_pub_sub_topic",
-            type=str,
-            required=True,
-            help="Pub/Sub topic for PDF upload events",
-        )
-        parser.add_argument(
-            "--output_pub_sub_topic",
-            type=str,
-            required=True,
-            help="Pub/Sub topic for PDF upload events",
-        )
-        parser.add_argument(
-            "--pub_sub_subscription",
-            type=str,
-            required=True,
-            help="Pub Sub Subscription which transmits bucket upload event",
         )
 
 
@@ -62,7 +42,7 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
             ),
         ]
 
-    def run(self, window_size=1.0, num_shards=5, argv=None):
+    def run(self, num_shards=5, argv=None):
         pipeline_options = PipelineOptions(argv)
         custom_options = pipeline_options.view_as(ProcessPDFPipelineOptions)
         os.environ["OPENAI_API_KEY"] = self.OPENAI_API_KEY
@@ -73,9 +53,7 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
 
                 obtain_pdf_from_gcs = (
                     pipeline
-                    | "emit GCS event"
-                    >> beam.io.ReadFromPubSub(topic=custom_options.input_pub_sub_topic)
-                    | "Window into" >> beam.WindowInto(FixedWindows(60))
+                    | "trigger pipeline" >> beam.Create(["START"])
                     | "download_pdf"
                     >> beam.ParDo(
                         dofn.DownloadPdfDoFn(self.logger_handler, self.app_configs)
@@ -104,24 +82,6 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
                         self.logger_handler,
                         self.app_configs,
                     )
-                )
-
-                # Garantir que apenas um evento final seja enviado para cada PDF processado
-                confirm_processing = (
-                    write_on_alloydb
-                    | "Apply windowing" >> beam.WindowInto(FixedWindows(1))
-                    | "Extract source_doc"
-                    >> beam.Map(
-                        lambda doc: {
-                            "source_doc": doc["source_doc"],
-                            "status": "PDF_PROCESSED",
-                        }
-                    )
-                    | "distinct" >> beam.Distinct()
-                    | "Prepare final message"
-                    >> beam.Map(lambda doc: json.dumps(doc).encode("utf-8"))
-                    | "sign pipeline was finished"
-                    >> beam.io.WriteToPubSub(topic=custom_options.output_pub_sub_topic)
                 )
 
         except Exception as err:

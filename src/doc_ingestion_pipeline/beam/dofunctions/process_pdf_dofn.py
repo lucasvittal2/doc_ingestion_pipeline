@@ -1,5 +1,6 @@
 import asyncio
 import json
+from datetime import date
 from pathlib import Path
 from typing import Dict, List
 
@@ -16,6 +17,33 @@ from doc_ingestion_pipeline.models.connections import AlloyDBConnection
 from doc_ingestion_pipeline.utils.app_logging import LoggerHandler
 
 
+class DownloadPdfDoFn(BaseDoFn):
+    def __init__(self, logger_hanlder: LoggerHandler, app_configs: dict):
+        super().__init__(logger_hanlder)
+        self.app_configs = app_configs
+
+    def setup(self):
+        super().setup()
+        self.storage_client = storage.Client(self.app_configs["GCP_PROJECT"])
+
+    def process(self, element, *args, **kwargs):
+        today = date.today().strftime("%Y-%m-%d")
+        bucket_name = self.app_configs["PDF_BUCKET_REPOSITORY"]
+        bucket = self.storage_client.get_bucket(bucket_name)
+        blobs = list(bucket.list_blobs(prefix=today))
+        self.logger.info("Downloading pdfs...")
+        local_paths = []
+        for blob in blobs[1:]:
+            file_name = blob.name.replace(f"{today}/", "")
+            local_path = f"assets/pdf/{file_name}"
+            blob.download_to_filename(local_path)
+            self.logger.info(f"Downloaded {file_name} from {bucket_name} bucket.")
+            local_paths.append(local_path)
+
+        self.logger.info(f"PDFs downloaded successfully !")
+        yield {"pdf_paths": local_paths}
+
+
 class GenerateChunksDoFn(BaseDoFn):
 
     def __init__(self, logger_handler: LoggerHandler):
@@ -25,28 +53,30 @@ class GenerateChunksDoFn(BaseDoFn):
         super().setup()
 
     @BaseDoFn.gauge
-    def process(self, element: Dict[str, str], *args, **kwargs):
-
-        pdf_path = Path(element["pdf_path"])
-        documents = PDFReader().load_data(pdf_path)
-
-        node_parser = SentenceWindowNodeParser.from_defaults(
-            window_size=5,
-            window_metadata_key="window",
-            original_text_metadata_key="original_text",
-        )
-        nodes = node_parser.get_nodes_from_documents(documents)
+    def process(self, element: Dict[str, List[str]], *args, **kwargs):
         chunks = []
-        for node in nodes:
+        for pdf_path in element["pdf_paths"]:
+            path = Path(pdf_path)
+            self.logger.info(f"Reading pdf at '{element}'...")
+            documents = PDFReader().load_data(path)
 
-            metadata = node.metadata
-            chunk = {
-                "id": node.id_,
-                "text": metadata["window"],
-                "source_doc": metadata["file_name"],
-                "page_number": int(metadata["page_label"]),
-            }
-            chunks.append(chunk)
+            node_parser = SentenceWindowNodeParser.from_defaults(
+                window_size=5,
+                window_metadata_key="window",
+                original_text_metadata_key="original_text",
+            )
+            nodes = node_parser.get_nodes_from_documents(documents)
+
+            for node in nodes:
+
+                metadata = node.metadata
+                chunk = {
+                    "id": node.id_,
+                    "text": metadata["window"],
+                    "source_doc": metadata["file_name"],
+                    "page_number": int(metadata["page_label"]),
+                }
+                chunks.append(chunk)
 
         yield from chunks
 
@@ -60,7 +90,7 @@ class ExtractPageTopicDoFn(BaseDoFn):
         super().setup()
 
     @BaseDoFn.gauge
-    def process(self, element: Dict[str, str], *args, **kwargs):
+    def process(self, element: Dict[str, List[str]], *args, **kwargs):
         chunk = element.copy()
         topics = self.topic_extractor.extract_topics(chunk["text"])
         chunk["topics"] = topics
@@ -159,29 +189,3 @@ class WriteOnAlloyDbFn(BaseDoFn):
             except Exception as e:
                 self.logger.error(f"Error processing final batch: {str(e)}")
                 raise
-
-
-class DownloadPdfDoFn(BaseDoFn):
-    def __init__(self, logger_hanlder: LoggerHandler, app_configs: dict):
-        super().__init__(logger_hanlder)
-        self.app_configs = app_configs
-
-    def setup(self):
-        super().setup()
-        self.storage_client = storage.Client(self.app_configs["GCP_PROJECT"])
-
-    def process(self, element, *args, **kwargs):
-        self.logger.info("Downloading pdf...")
-        metadata_json_str = element.decode("utf-8")
-        metadata_dict = json.loads(metadata_json_str)
-        file_name = metadata_dict["name"]
-        bucket_name = metadata_dict["bucket"]
-        self.logger.info(f"Downloaded {file_name} from {bucket_name} bucket.")
-        bucket = self.storage_client.get_bucket(
-            self.app_configs["PDF_BUCKET_REPOSITORY"]
-        )
-        blob = bucket.blob(file_name)
-        local_path = f"assets/pdf/{file_name}"
-        blob.download_to_filename(local_path)
-        self.logger.info(f"PDF is available locally on {local_path}")
-        yield {"pdf_path": local_path}
