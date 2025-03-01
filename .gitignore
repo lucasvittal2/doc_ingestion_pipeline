@@ -4,9 +4,6 @@
 /.env
 /assets/configs/app-configs.yaml
 /assets/pdf/fundamentals-data-engineering-robust-29-57.pdf
-/terraform/environments/dev/.terraform/
-/terraform/environments/dev/.terraform.lock.hcl
-/terraform/environments/dev/terraform.tfstate.backup
 /terraform/environments/dev/variables
 /assets/pdf/fundamentals-data-engineering-robust-29-57-1-3.pdf
 /dist/

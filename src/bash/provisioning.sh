@@ -164,7 +164,7 @@ create_project_gcp_resources() {
   echo ""
   REGION=$1
   PROJECT_DIR=$(pwd)
-  cd terraform/environments/dev
+  cd terraform/environment
 
   # Initialize, plan, and apply Terraform
   terraform init && terraform plan && terraform apply --auto-approve
@@ -234,7 +234,7 @@ create_cloud_scheduler_job() {
     echo ""
     echo "⚙️  Creating cloud scheduler job '${JOB_NAME}'..."
     if gcloud functions describe "$FUNCTION_NAME" --region="$REGION" &> /dev/null; then
-        FUNCTION_URL=$(gcloud functions describe "trigger-pdf-ingestion-pipeline3" --region="us-central1" | grep url | sed "s/url: //g")
+        FUNCTION_URL=$(gcloud functions describe "$FUNCTION_NAME" --region="us-central1" | grep url | sed "s/url: //g")
         echo "✅ Cloud Function '$FUNCTION_NAME' found. URL: $FUNCTION_URL"
         echo ""
     else
@@ -271,6 +271,11 @@ while [[ $# -gt 0 ]]; do
     echo "ENV=$ENV"
     shift 2
     ;;
+  --mode)
+    MODE="$2"
+    echo "MODE=$MODE"
+    shift 2
+    ;;
   --pipeline-bucket)
     PIPELINE_BUCKET="$2"
     echo "PIPELINE_BUCKET=$PIPELINE_BUCKET"
@@ -302,6 +307,11 @@ while [[ $# -gt 0 ]]; do
     echo "REGION=$REGION"
     shift 2
     ;;
+  --location)
+    LOCATION="$2"
+    echo "LOCATION=$LOCATION"
+    shift 2
+    ;;
   --cloud-function-name)
     CLOUD_FUNCTION_NAME="$2"
     echo "CLOUD_FUNCTION_NAME=$CLOUD_FUNCTION_NAME"
@@ -330,12 +340,41 @@ esac
 done
 
 # Main Execution
-REGISTRY_URL="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY_NAME}/${CONTAINER_IMAGE}"
-create_gcs_pipeline_bucket "$PIPELINE_BUCKET" "$PROJECT_ID"
-build_container "$REGISTRY_URL"
-create_artifact_repo "$REPOSITORY_NAME" "$PROJECT_ID"
-push_container_gcp "$REGISTRY_URL"
-create_pipeline_template "$PROJECT_ID" "$PROJECT_NUMBER" "$REGION" "$REPOSITORY_NAME" "$CONTAINER_IMAGE" "$ENV"
-create_project_gcp_resources "$REGION"
-deploy_cloud_function "$CLOUD_FUNCTION_NAME" "$REGION" "$PROJECT_NUMBER"
-create_cloud_scheduler_job "$CRON_JOB_NAME" "$CRON_SCHEDULE" "$CRON_TIMEZONE" "$CLOUD_FUNCTION_NAME" "$REGION"
+
+
+## Set terraform generic variables
+export TF_VAR_location=$LOCATION
+export TF_VAR_region=$REGION
+export TF_VAR_project_name=$PROJECT_ID
+export TF_VAR_project_number=$PROJECT_NUMBER
+export TF_VAR_env=$ENV
+
+
+if [[ "$MODE" == "CREATE" ]]; then
+  REGISTRY_URL="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY_NAME}/${CONTAINER_IMAGE}"
+  create_gcs_pipeline_bucket "$PIPELINE_BUCKET" "$PROJECT_ID"
+  build_container "$REGISTRY_URL"
+  create_artifact_repo "$REPOSITORY_NAME" "$PROJECT_ID"
+  push_container_gcp "$REGISTRY_URL"
+  create_pipeline_template "$PROJECT_ID" "$PROJECT_NUMBER" "$REGION" "$REPOSITORY_NAME" "$CONTAINER_IMAGE" "$ENV"
+  create_project_gcp_resources "$REGION"
+  deploy_cloud_function "$CLOUD_FUNCTION_NAME" "$REGION" "$PROJECT_NUMBER"
+  create_cloud_scheduler_job "$CRON_JOB_NAME" "$CRON_SCHEDULE" "$CRON_TIMEZONE" "$CLOUD_FUNCTION_NAME" "$REGION"
+
+elif [[ "$MODE" == "DESTROY" ]]; then
+  echo ""
+  echo "🔥 Destroying provisioned infrastructure..."
+  cd terraform/environment
+  terraform destroy --auto-approve
+  echo "💥 Deleted all infrastructure provisioned by terraform."
+  gcloud scheduler jobs delete "$CRON_JOB_NAME" --location="$REGION" --quiet
+  echo "💥 Deleted Cloud Scheduler job '$CRON_JOB_NAME'."
+  gcloud functions delete "$CLOUD_FUNCTION_NAME" --region="$REGION" --quiet
+  echo "💥 Deleted Cloud Function '$CLOUD_FUNCTION_NAME'."
+  echo "✅ Destroyed all resources successfully."
+  echo ""
+
+else
+  echo "❌  You have provided an invalid mode for this script"
+  echo "⚠️  Try with 'CREATE' or 'DESTROY' using the --mode parameter!"
+fi
