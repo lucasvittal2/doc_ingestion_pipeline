@@ -22,7 +22,7 @@ variable "dataflow_job_name" {
 }
 
 variable "doc_ingestion_bucket" {
-  description = "The env of  this project"
+  description = "Bucket used to push all dataflow job dependencies"
   type = string
 }
 
