@@ -271,6 +271,11 @@ while [[ $# -gt 0 ]]; do
     echo "ENV=$ENV"
     shift 2
     ;;
+  --mode)
+    MODE="$2"
+    echo "MODE=$MODE"
+    shift 2
+    ;;
   --pipeline-bucket)
     PIPELINE_BUCKET="$2"
     echo "PIPELINE_BUCKET=$PIPELINE_BUCKET"
@@ -345,12 +350,31 @@ export TF_VAR_project_number=$PROJECT_NUMBER
 export TF_VAR_env=$ENV
 
 
-REGISTRY_URL="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY_NAME}/${CONTAINER_IMAGE}"
-create_gcs_pipeline_bucket "$PIPELINE_BUCKET" "$PROJECT_ID"
-build_container "$REGISTRY_URL"
-create_artifact_repo "$REPOSITORY_NAME" "$PROJECT_ID"
-push_container_gcp "$REGISTRY_URL"
-create_pipeline_template "$PROJECT_ID" "$PROJECT_NUMBER" "$REGION" "$REPOSITORY_NAME" "$CONTAINER_IMAGE" "$ENV"
-create_project_gcp_resources "$REGION"
-deploy_cloud_function "$CLOUD_FUNCTION_NAME" "$REGION" "$PROJECT_NUMBER"
-create_cloud_scheduler_job "$CRON_JOB_NAME" "$CRON_SCHEDULE" "$CRON_TIMEZONE" "$CLOUD_FUNCTION_NAME" "$REGION"
+if [[ "$MODE" == "CREATE" ]]; then
+  REGISTRY_URL="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY_NAME}/${CONTAINER_IMAGE}"
+  create_gcs_pipeline_bucket "$PIPELINE_BUCKET" "$PROJECT_ID"
+  build_container "$REGISTRY_URL"
+  create_artifact_repo "$REPOSITORY_NAME" "$PROJECT_ID"
+  push_container_gcp "$REGISTRY_URL"
+  create_pipeline_template "$PROJECT_ID" "$PROJECT_NUMBER" "$REGION" "$REPOSITORY_NAME" "$CONTAINER_IMAGE" "$ENV"
+  create_project_gcp_resources "$REGION"
+  deploy_cloud_function "$CLOUD_FUNCTION_NAME" "$REGION" "$PROJECT_NUMBER"
+  create_cloud_scheduler_job "$CRON_JOB_NAME" "$CRON_SCHEDULE" "$CRON_TIMEZONE" "$CLOUD_FUNCTION_NAME" "$REGION"
+
+elif [[ "$MODE" == "DESTROY" ]]; then
+  echo ""
+  echo "🔥 Destroying provisioned infrastructure..."
+  cd terraform/environment
+  terraform destroy --auto-approve
+  echo "💥 Deleted all infrastructure provisioned by terraform."
+  gcloud scheduler jobs delete "$CRON_JOB_NAME" --location="$REGION" --quiet
+  echo "💥 Deleted Cloud Scheduler job '$CRON_JOB_NAME'."
+  gcloud functions delete "$CLOUD_FUNCTION_NAME" --region="$REGION" --quiet
+  echo "💥 Deleted Cloud Function '$CLOUD_FUNCTION_NAME'."
+  echo "✅ Destroyed all resources successfully."
+  echo ""
+
+else
+  echo "❌  You have provided an invalid mode for this script"
+  echo "⚠️  Try with 'CREATE' or 'DESTROY' using the --mode parameter!"
+fi
