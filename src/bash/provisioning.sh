@@ -164,7 +164,7 @@ create_project_gcp_resources() {
   echo ""
   REGION=$1
   PROJECT_DIR=$(pwd)
-  cd terraform/environments/dev
+  cd terraform/environment
 
   # Initialize, plan, and apply Terraform
   terraform init && terraform plan && terraform apply --auto-approve
@@ -234,7 +234,7 @@ create_cloud_scheduler_job() {
     echo ""
     echo "⚙️  Creating cloud scheduler job '${JOB_NAME}'..."
     if gcloud functions describe "$FUNCTION_NAME" --region="$REGION" &> /dev/null; then
-        FUNCTION_URL=$(gcloud functions describe "trigger-pdf-ingestion-pipeline3" --region="us-central1" | grep url | sed "s/url: //g")
+        FUNCTION_URL=$(gcloud functions describe "$FUNCTION_NAME" --region="us-central1" | grep url | sed "s/url: //g")
         echo "✅ Cloud Function '$FUNCTION_NAME' found. URL: $FUNCTION_URL"
         echo ""
     else
@@ -302,6 +302,11 @@ while [[ $# -gt 0 ]]; do
     echo "REGION=$REGION"
     shift 2
     ;;
+  --location)
+    LOCATION="$2"
+    echo "LOCATION=$LOCATION"
+    shift 2
+    ;;
   --cloud-function-name)
     CLOUD_FUNCTION_NAME="$2"
     echo "CLOUD_FUNCTION_NAME=$CLOUD_FUNCTION_NAME"
@@ -330,6 +335,16 @@ esac
 done
 
 # Main Execution
+
+
+## Set terraform generic variables
+export TF_VAR_location=$LOCATION
+export TF_VAR_region=$REGION
+export TF_VAR_project_name=$PROJECT_ID
+export TF_VAR_project_number=$PROJECT_NUMBER
+export TF_VAR_env=$ENV
+
+
 REGISTRY_URL="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY_NAME}/${CONTAINER_IMAGE}"
 create_gcs_pipeline_bucket "$PIPELINE_BUCKET" "$PROJECT_ID"
 build_container "$REGISTRY_URL"
