@@ -9,7 +9,6 @@ from apache_beam.transforms.display import DisplayDataItem
 from doc_ingestion_pipeline.beam.dofunctions import process_pdf_dofn as dofn
 from doc_ingestion_pipeline.beam.dofunctions.base_dofn import BaseDoFn
 from doc_ingestion_pipeline.utils.app_logging import LoggerHandler
-from doc_ingestion_pipeline.utils.file_handling import read_yaml
 
 
 class ProcessPDFPipelineOptions(PipelineOptions):
@@ -90,8 +89,9 @@ class ProcessPdfPipeline(BaseDoFn, beam.Pipeline):
 
 
 if __name__ == "__main__":
+    from doc_ingestion_pipeline.utils.file_handling import get_gcp_secrets
 
-    app_configs = read_yaml("assets/configs/app-configs.yaml")
+    app_configs = get_gcp_secrets("150030916493", "doc-ingestion-pipeline-secrets")
     logger_handler = LoggerHandler(
         logger_name="PDF-INGESTION-PIPELINE", logging_type="gcp_console"
     )
