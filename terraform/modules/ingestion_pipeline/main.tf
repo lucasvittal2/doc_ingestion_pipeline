@@ -20,6 +20,7 @@ resource "google_storage_bucket" "pdf_repo" {
   name          = var.pdf_repo_bucket_name
   project = var.project_name
   location      = var.location
+
   force_destroy = true
 
   lifecycle_rule {

@@ -16,11 +16,6 @@ variable "project_name" {
 }
 # Document Repository Variables
 
-variable "dataflow_job_name" {
-  description = "The service account used on this project"
-  type = string
-}
-
 variable "doc_ingestion_bucket" {
   description = "Bucket used to push all dataflow job dependencies"
   type = string

@@ -9,3 +9,7 @@ output "alloydb_cluster_id" {
 output "alloydb_primary_instance_id" {
   value = module.alloydb_central.primary_instance_id
 }
+
+output "alloydb_primary_instance"{
+  value = module.alloydb_central.primary_instance
+}

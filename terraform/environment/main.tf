@@ -5,7 +5,10 @@ module "alloydb_central" {
   cluster_location = var.region
   project_id       = var.project_name
   network_self_link = "projects/${var.project_name}/global/networks/simple-adb-doc-ingestion-${var.env}"
-
+  cluster_initial_user = {
+    user     = "user-${var.env}"
+    password = "admin-${var.env}"
+  }
 
   automated_backup_policy = {
     location      = var.region
@@ -45,5 +48,4 @@ module "ingestion_pipeline" {
   region = var.region
   pdf_repo_bucket_name= "pdf-repository-${var.env}-${var.project_number}"
   doc_ingestion_bucket = "doc-ingestion-pipeline-${var.env}-${var.project_number}"
-  dataflow_job_name = "doc-ingestion-pipeline-${var.env}-job"
 }
