@@ -31,7 +31,8 @@ class DownloadPdfDoFn(BaseDoFn):
         bucket_name = self.app_configs["PDF_BUCKET_REPOSITORY"]
         bucket = self.storage_client.get_bucket(bucket_name)
         blobs = list(bucket.list_blobs(prefix=today))
-        self.logger.info("Downloading pdfs...")
+        self.logger.info(f"Downloading pdfs for day '{today}' from {bucket_name}...")
+        self.logger.info(f"{blobs}")
         local_paths = []
         for blob in blobs[1:]:
             file_name = blob.name.replace(f"{today}/", "")
@@ -40,7 +41,15 @@ class DownloadPdfDoFn(BaseDoFn):
             self.logger.info(f"Downloaded {file_name} from {bucket_name} bucket.")
             local_paths.append(local_path)
 
-        self.logger.info(f"PDFs downloaded successfully !")
+        if len(local_paths) == 0:
+
+            self.logger.warning(
+                "No PDF were uploaded on last 24 hours. Skipping pipeline execution."
+            )
+
+        else:
+            self.logger.info(f"PDFs downloaded successfully !")
+
         yield {"pdf_paths": local_paths}
 
 
