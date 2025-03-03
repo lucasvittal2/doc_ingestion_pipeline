@@ -40,21 +40,3 @@ resource "google_compute_network" "default" {
   auto_create_subnetworks = true
   project = var.project_name
 }
-
-resource "google_dataflow_job" "pubsub_stream" {
-  name              = var.dataflow_job_name
-  project           = var.project_name
-  region            = var.region
-  template_gcs_path = "gs://${var.doc_ingestion_bucket}/templates/doc_ingestion_template"
-  temp_gcs_location = "gs://${var.doc_ingestion_bucket}/tmp"
-  machine_type      = "n1-standard-8"
-  network = "default"
-  subnetwork = "regions/${var.region}/subnetworks/default-subnet"
-  enable_streaming_engine = true
-  on_delete = "cancel"
-
-  depends_on = [
-    google_storage_bucket_iam_member.pdf_repo_role,
-    google_project_iam_member.terraform_roles
-  ]
-}
