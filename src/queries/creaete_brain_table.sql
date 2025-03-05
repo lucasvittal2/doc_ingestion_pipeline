@@ -1,3 +1,4 @@
+CREATE EXTENSION vector;
 DROP TABLE IF EXISTS "bot-brain";
 CREATE TABLE "bot-brain" (
   id VARCHAR(150),

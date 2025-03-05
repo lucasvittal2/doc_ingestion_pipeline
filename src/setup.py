@@ -39,6 +39,7 @@ dependencies = [
     "scikit-learn==1.5.1",
     "google-cloud-storage==2.19.0",
     "google-cloud-logging==3.11.4",
+    "google-cloud-secret-manager==2.10.0",
     "uvicorn==0.34.0",
     "fastapi==0.115.6",
     "langchain-google-vertexai==2.0.12",

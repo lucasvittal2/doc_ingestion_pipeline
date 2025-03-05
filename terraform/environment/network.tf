@@ -1,11 +1,11 @@
 resource "google_compute_network" "default" {
-  name    = "simple-adb-doc-ingestion"
-  project = "150030916493"
+  name    = "simple-adb-doc-ingestion-${var.env}"
+  project = var.project_name
 }
 
 
 resource "google_compute_global_address" "private_ip_alloc" {
-  project       = "150030916493"
+  project       = var.project_number
   name          = "adb-psa"
   address_type  = "INTERNAL"
   purpose       = "VPC_PEERING"
