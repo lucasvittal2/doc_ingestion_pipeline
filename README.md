@@ -41,36 +41,76 @@ An ilustration of all system can be seen below:
 ```sh
   $> make init
 ```
-2. - Replace all tags to your projects and resources configuration on `app-configs-example.yaml` and rename it to `app-configs.yaml`
-3. -  Got to `terraform/environments/dev/main.tf` and change all configs commented according your project configuration
-4. - Provision all resourcer need for project running:
-```shell
-$> src/bash/provisioning.sh \
+2. Exchange all TAGs (less db_host) at `app-configs-template.yaml` with your projects parameters and rename it to `app-configs.yaml`
+3. Provision all GCP resouces need by project run provisioning.sh as example below:
+```sh
+src/bash/provisioning.sh \
    --env dev \
-   --project-id "<PROJECT_ID>" \
-   --pipeline-bucket "doc-ingestion-pipeline-dev-<PROJECT_NUMBER>" \
-   --registry-repo-name "<REGISTRY_REPOSITORY_NAME>" \
-   --container-image "<CONTAINER_IMAGE_TAG>" \
-   --project-number "<PROJECT_NUMBER>" \
-   --region "<REGION>"
-```
-![img_1.png](assets/images/enable_publicip.png)
-5. Copy the public IP Address of instance, then replace tag '<INSTANCE_PUBLIC_ADDRESS>' on `app-config.yml` by the instance public IP address
-![img.png](assets/images/public_ipadd.png)
-6. Click on instance at alloyDB cluster tab:
-![img.png](assets/images/img99.png)
-7. Got to Users tab then create a username and password according your preference, then click add to add new user:
-![img_2.png](assets/images/img_2.png)!
-8. Go to AlloyDB Studio tab then login
-![img_2.png](assets/images/img_2.png)
-9. Create `bot-brain` table running the query at `src/queries/creaete_brain_table.sql`
-![img_3.png](assets/images/img_3.png)
-10. Go to your pdf bucket repository and upload a pdf file there\
-11. Go to dataflow worker logs a see magic happening\
+   --mode "CREATE"\
+   --project-id "the-bot-specialist-dev" \
+   --project-number "150030916493" \
+   --region "us-central1" \
+   --location "US" \
+   --cloud-function-name "trigger-pdf-ingestion-dataflow-job"\
+   --cron-job-name "trigger-pdf-ingestion-schedule" \
+   --cron-shedule "50 16 * * *" \
+   --cron-timezone "America/Sao_Paulo"
+``` 
 
-12. After the pipeline finished to run you can check if data were properly saved on AlloyDB postgres database with:
+4. Then exchange manually on app-configs.yaml the alloyDB instance public ID created on provisioning.sh
+```yaml
+CONNECTIONS:
+  ALLOYDB:
+    DEV:
+      connection_name: "the-bot-specialist-dev:us-central1:vector-store-dev"
+      region: "us-central1"
+      cluster: "cluster-us-central1-dev"
+      instance: "cluster-us-central1-instance1-dev"
+      database: "postgres"
+      table_name: "bot-brain"
+      project_id: "the-bot-specialist-dev"
+      db_schema: "public"
+      db_host: "<ALLOYDB-INSTANCE-PUBLIC-IP>" # ←  put here  the new public ip address create where
+      db_user: "<ALLOY_DB_USER>"
+      db_password: "<PASSWORD>"
+      db_port: 5432
+      db_name: "postgres"
+      use_private_ip: False
+```
+
+4. Upload config file to cloud secrets and name it as 'doc-ingestion-pipeline-secrets'
+
+5. Go to AlloyDB Studio and run the following query using 'user-dev' credentials, then run the query below there:
 ```sql
-SELECT * FROM bot-brain;
+    CREATE EXTENSION vector;
+    DROP TABLE IF EXISTS "bot-brain";
+    CREATE TABLE "bot-brain" (
+      id VARCHAR(150),
+      text VARCHAR(5000),
+      page_number INTEGER,
+      source_doc VARCHAR(100),
+      embedding vector(768),
+      topics VARCHAR[]
+);
+```
+
+6. Then run all process to setup pipeline running setup_pipeline.sh as follows:
+```sh
+src/bash/pipeline_setup.sh \
+	--env "dev" \
+	--registry-repo-name "bot-especialist-repo" \
+	--container-image "doc-ingestion-pipeline-dev:v1.1" \
+	--project-id "the-bot-specialist-dev" \
+	--project-number "150030916493" \
+	--region "us-central1"
+```
+7. To test doc ingestion pipeline dataflow job, go to cloud schedule and click on option force run on 'trigger-pdf-ingestion-dataflow-job'
+
+8. Check logs, check if dataflow job runned as expected, finally check if 'bot-brain' was populated running this query on alloyDB Studio:
+
+```sql
+SELECT * from bot-brain;
+```
 ```
 ## 🤲 Contributing
 
