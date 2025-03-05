@@ -60,7 +60,7 @@ src/bash/provisioning.sh \
    --cron-job-name "trigger-pdf-ingestion-schedule" \
    --cron-shedule "50 16 * * *" \
    --cron-timezone "America/Sao_Paulo"
-``` 
+```
 
 4. Then exchange manually on app-configs.yaml the alloyDB instance public ID created on provisioning.sh
 ```yaml
